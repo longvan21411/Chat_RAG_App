@@ -1,0 +1,49 @@
+I want to have an instruction.md file to implement requirements as below.
+
+Add new project with web application .Net 8
+
+Web application using chat app RAG pattern to implement.
+
+Chat RAG app allow user to login into system. System just allow logged users.
+
+Chat RAG app will be automatically logged out if user none activated in 5 minutes.
+
+Chat RAG app allow user to use SSO method.
+
+SSO will use google.com, gmail.com to sign in the system.
+
+Chat RAG app allow to connect Qdrant vector database to store chat history.
+
+Chat RAG app allow to insert a bulk of images.
+
+Images will be uploaded into a definition folder.
+
+Images information will be stored in the payload of point struct.
+
+Point struct need to define two different vector data, one for text description of image and one for image embedding data.
+
+When upload an image or a bulk of image, we need to consider to store information of images as bellow: File name, Title of image, Category, Description, Created date, Is actived
+
+Chat RAG app allow to define a MCP server.
+
+Chat RAG app allow to define the max token to send specific LLM model.
+
+Chat RAG app allow to search the text to find the images which stored in Qdrant database through the embedding image data.
+
+The login user will store inside the table in Qdrant database.
+
+Chat RAG app support to load 5 latest history.
+
+Chat RAG app support multiple agents.
+
+Agent supports to chat with specific LLM model.
+
+Agent measure the token input, output, cached.
+
+Agent support to semantic search for specific images.
+
+Agent support to predict the next questions.
+
+Agent support to generate instruction.md file. This purpose help to develop new feature in the future.
+
+Agent support to create a report to show on dashboard what images, text search by a day.
