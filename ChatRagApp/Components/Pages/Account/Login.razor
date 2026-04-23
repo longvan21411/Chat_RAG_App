@@ -20,10 +20,43 @@
                         </div>
                     }
 
+                    @if (Registered == true)
+                    {
+                        <div class="alert alert-success text-start" role="alert">
+                            Registration completed. You can now sign in with your username and password.
+                        </div>
+                    }
+
+                    <form method="post" action="/account/login" class="text-start mb-4">
+                        <input type="hidden" name="returnUrl" value="@NormalizedReturnUrl" />
+
+                        <div class="mb-3">
+                            <label class="form-label" for="userName">Username</label>
+                            <input class="form-control" id="userName" name="userName" autocomplete="username" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="password">Password</label>
+                            <input class="form-control" id="password" name="password" type="password" autocomplete="current-password" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Sign in</button>
+                    </form>
+
+                    <p class="text-muted small mb-4">
+                        Technical account for development: <strong>admin</strong> / <strong>admin</strong>
+                    </p>
+
+                    <div class="d-flex align-items-center gap-3 text-muted small mb-4">
+                        <div class="border-top flex-grow-1"></div>
+                        <span>or continue with OpenID Connect</span>
+                        <div class="border-top flex-grow-1"></div>
+                    </div>
+
                     @if (GoogleConfigured)
                     {
                         <a href="@GoogleLoginUrl"
-                           class="btn btn-lg btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2">
+                           class="btn btn-lg btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2 mb-4">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48">
                                 <path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.4c-.5 2.8-2.1 5.1-4.5 6.7v5.5h7.3c4.3-3.9 6.9-9.7 6.9-16.2z" />
                                 <path fill="#34A853" d="M24 47c6.5 0 11.9-2.1 15.9-5.8l-7.3-5.5c-2.2 1.5-5 2.3-8.6 2.3-6.6 0-12.2-4.4-14.2-10.4H2.4v5.7C6.4 41.7 14.6 47 24 47z" />
@@ -35,10 +68,15 @@
                     }
                     else
                     {
-                        <div class="alert alert-warning text-start mb-0" role="alert">
+                        <div class="alert alert-warning text-start mb-4" role="alert">
                             Google sign-in is not configured for this environment. Set <strong>Google:ClientId</strong> and <strong>Google:ClientSecret</strong> to enable authentication.
                         </div>
                     }
+
+                    <p class="text-muted small mb-0">
+                        Need an account?
+                        <a href="/register">Register here</a>
+                    </p>
 
                     <p class="text-muted mt-4 small">
                         Access is restricted to authorized Google accounts.
@@ -56,19 +94,26 @@
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
+    [SupplyParameterFromQuery]
+    private bool? Registered { get; set; }
+
     private bool GoogleConfigured =>
         !string.IsNullOrWhiteSpace(Configuration["Google:ClientId"]) &&
         !string.IsNullOrWhiteSpace(Configuration["Google:ClientSecret"]);
 
     private string GoogleLoginUrl => $"/account/external-login?provider=Google&returnUrl={Uri.EscapeDataString(NormalizedReturnUrl)}";
 
-    private string NormalizedReturnUrl => string.IsNullOrWhiteSpace(ReturnUrl) ? "/" : ReturnUrl!;
+    private string NormalizedReturnUrl =>
+        string.IsNullOrWhiteSpace(ReturnUrl) || !ReturnUrl.StartsWith('/') || ReturnUrl.StartsWith("//")
+            ? "/"
+            : ReturnUrl!;
 
     private string? ErrorMessage => Error switch
     {
         "auth_failed" => "Authentication failed. Please try again.",
         "no_email" => "Your Google account did not return an email address.",
         "provider_unavailable" => "Google sign-in is not configured for this environment.",
+        "invalid_credentials" => "Invalid username or password.",
         _ => null
     };
 }

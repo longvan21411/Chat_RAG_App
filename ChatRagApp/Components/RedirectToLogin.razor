@@ -2,7 +2,8 @@
 @code {
     protected override void OnInitialized()
     {
-        var returnUrl = Uri.EscapeDataString(Navigation.Uri);
+        var currentUri = new Uri(Navigation.Uri);
+        var returnUrl = Uri.EscapeDataString($"{currentUri.PathAndQuery}{currentUri.Fragment}");
         Navigation.NavigateTo($"/login?returnUrl={returnUrl}", forceLoad: true);
     }
 }

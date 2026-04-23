@@ -69,9 +69,11 @@ public class QdrantService : IQdrantService
             dense.Data.Add(0f);
             var point = new PointStruct { Id = new PointId { Uuid = user.Id.ToString() } };
             point.Vectors = new Vectors { Vector = new Vector { Dense = dense } };
+            point.Payload["username"] = new Value { StringValue = user.UserName };
             point.Payload["email"] = new Value { StringValue = user.Email };
             point.Payload["display_name"] = new Value { StringValue = user.DisplayName };
             point.Payload["provider"] = new Value { StringValue = user.Provider };
+            point.Payload["password_hash"] = new Value { StringValue = user.PasswordHash };
             point.Payload["last_login"] = new Value { StringValue = user.LastLogin.ToString("O") };
             point.Payload["is_active"] = new Value { BoolValue = user.IsActive };
             await _client.UpsertAsync(UsersCollection, new List<PointStruct> { point }, cancellationToken: ct);
@@ -94,14 +96,43 @@ public class QdrantService : IQdrantService
             return new AppUser
             {
                 Id = Guid.TryParse(p.Id.Uuid, out var g) ? g : Guid.Empty,
+                UserName = GetString(p.Payload, "username"),
                 Email = GetString(p.Payload, "email"),
                 DisplayName = GetString(p.Payload, "display_name"),
                 Provider = GetString(p.Payload, "provider"),
+                PasswordHash = GetString(p.Payload, "password_hash"),
                 IsActive = GetBool(p.Payload, "is_active"),
                 LastLogin = DateTime.TryParse(GetString(p.Payload, "last_login"), out var dt) ? dt : DateTime.UtcNow
             };
         }
         catch (Exception ex) { _logger.LogWarning(ex, "GetUserByEmail failed for {Email}", email); return null; }
+    }
+
+    public async Task<AppUser?> GetUserByUserNameAsync(string userName, CancellationToken ct = default)
+    {
+        try
+        {
+            var filter = new Filter();
+            filter.Must.Add(new Condition
+            {
+                Field = new FieldCondition { Key = "username", Match = new Match { Text = userName } }
+            });
+            var response = await _client.ScrollAsync(UsersCollection, filter, limit: 1, cancellationToken: ct);
+            var p = response.Result.FirstOrDefault();
+            if (p is null) return null;
+            return new AppUser
+            {
+                Id = Guid.TryParse(p.Id.Uuid, out var g) ? g : Guid.Empty,
+                UserName = GetString(p.Payload, "username"),
+                Email = GetString(p.Payload, "email"),
+                DisplayName = GetString(p.Payload, "display_name"),
+                Provider = GetString(p.Payload, "provider"),
+                PasswordHash = GetString(p.Payload, "password_hash"),
+                IsActive = GetBool(p.Payload, "is_active"),
+                LastLogin = DateTime.TryParse(GetString(p.Payload, "last_login"), out var dt) ? dt : DateTime.UtcNow
+            };
+        }
+        catch (Exception ex) { _logger.LogWarning(ex, "GetUserByUserName failed for {UserName}", userName); return null; }
     }
 
     public async Task SaveChatMessageAsync(ChatMessage message, float[] embedding, CancellationToken ct = default)

@@ -1,10 +1,12 @@
 using ChatRagApp.Agents;
 using ChatRagApp.Components;
 using ChatRagApp.Mcp;
+using ChatRagApp.Models;
 using ChatRagApp.Services;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
@@ -49,6 +51,7 @@ else
 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
 
 // ── Qdrant ──────────────────────────────────────────────────────────────────
 builder.Services.AddSingleton(_ =>

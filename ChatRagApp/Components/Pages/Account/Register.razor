@@ -1,0 +1,72 @@
+@page "/register"
+@layout ChatRagApp.Components.Layout.MainLayout
+
+<PageTitle>Register — Chat RAG App</PageTitle>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <h2 class="card-title mb-2 text-center">Create Account</h2>
+                    <p class="text-muted text-center mb-4">Register a local account for development access.</p>
+
+                    @if (!string.IsNullOrEmpty(ErrorMessage))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @ErrorMessage
+                        </div>
+                    }
+
+                    <form method="post" action="/account/register">
+                        <div class="mb-3">
+                            <label class="form-label" for="displayName">Display name</label>
+                            <input class="form-control" id="displayName" name="displayName" autocomplete="name" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="userName">Username</label>
+                            <input class="form-control" id="userName" name="userName" autocomplete="username" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="email">Email</label>
+                            <input class="form-control" id="email" name="email" type="email" autocomplete="email" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="password">Password</label>
+                            <input class="form-control" id="password" name="password" type="password" autocomplete="new-password" required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label" for="confirmPassword">Confirm password</label>
+                            <input class="form-control" id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </form>
+
+                    <p class="text-muted small mt-4 mb-0 text-center">
+                        Already have an account?
+                        <a href="/login">Back to login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private string? Error { get; set; }
+
+    private string? ErrorMessage => Error switch
+    {
+        "missing_fields" => "All required fields must be filled in.",
+        "password_mismatch" => "The password confirmation does not match.",
+        "username_taken" => "That username is already in use.",
+        "email_taken" => "That email address is already in use.",
+        _ => null
+    };
+}
