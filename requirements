@@ -4,29 +4,6 @@ Add new project with web application .Net 8
 Create a Blazor Web App (Server is simplest).
 Web application using chat app RAG pattern to implement.
 
-The folder structure should as below.
-ChatRagApp/
-├── src/
-│   ├── ChatRagApp.Web/              # Blazor Web App 
-│   ├── ChatRagApp.Core/             # Domain models, interfaces
-│   │   ├── Models/
-│   │   ├── Interfaces/
-│   │   └── Enums/
-│   ├── ChatRagApp.Infrastructure/   # External services
-│   │   ├── Qdrant/
-│   │   ├── LLM/
-│   │   ├── Auth/
-│   │   └── MCP/
-│   └── ChatRagApp.Services/         # Business logic
-│       ├── ChatService.cs
-│       ├── ImageService.cs
-│       ├── AgentService.cs
-│       └── ReportService.cs
-├── uploads/
-│   └── images/                      # Image storage folder
-├── instruction.md                   # This file
-└── ChatRagApp.sln
-
 Chat RAG app allow user to login into system. System just allow logged users.
 
 Chat RAG app will be automatically logged out if user none activated in 5 minutes.
@@ -70,3 +47,26 @@ Agent support to predict the next questions.
 Agent support to generate instruction.md file. This purpose help to develop new feature in the future.
 
 Agent support to create a report to show on dashboard what images, text search by a day.
+
+The folder structure should as below.
+ChatRagApp/
+├── src/
+│   ├── ChatRagApp.Web/              # Blazor Web App 
+│   ├── ChatRagApp.Core/             # Domain models, interfaces
+│   │   ├── Models/
+│   │   ├── Interfaces/
+│   │   └── Enums/
+│   ├── ChatRagApp.Infrastructure/   # External services
+│   │   ├── Qdrant/
+│   │   ├── LLM/
+│   │   ├── Auth/
+│   │   └── MCP/
+│   └── ChatRagApp.Services/         # Business logic
+│       ├── ChatService.cs
+│       ├── ImageService.cs
+│       ├── AgentService.cs
+│       └── ReportService.cs
+├── uploads/
+│   └── images/                      # Image storage folder
+├── instruction.md                   # This file
+└── ChatRagApp.sln
