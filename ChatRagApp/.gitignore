@@ -1,0 +1,29 @@
+# Build outputs
+bin/
+obj/
+
+# User secrets / local settings
+appsettings.Local.json
+**/secrets.json
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Rider
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# NuGet
+*.nupkg
+*.snupkg
+
+# Uploaded images (runtime data)
+ChatRagApp/wwwroot/uploads/
+
+# Logs
+*.log

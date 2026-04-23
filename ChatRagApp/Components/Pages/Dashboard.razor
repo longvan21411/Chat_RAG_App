@@ -1,0 +1,164 @@
+@page "/dashboard"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject IQdrantService QdrantService
+@inject IJSRuntime JS
+
+<PageTitle>Dashboard — Chat RAG App</PageTitle>
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>📊 Dashboard</h1>
+        <div class="d-flex align-items-center gap-2">
+            <input type="date" class="form-control form-control-sm" style="width:160px"
+                   @bind="SelectedDate" @bind:format="yyyy-MM-dd" />
+            <button class="btn btn-sm btn-primary" @onclick="LoadReport" disabled="@IsLoading">
+                @if (IsLoading) { <span class="spinner-border spinner-border-sm"></span> }
+                else { <span>Refresh</span> }
+            </button>
+        </div>
+    </div>
+
+    @if (Report is not null)
+    {
+        <!-- KPI Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm text-center p-3">
+                    <div class="fs-2 mb-1">🖼️</div>
+                    <div class="fs-3 fw-bold text-primary">@Report.ImagesUploadedToday</div>
+                    <div class="text-muted small">Images Uploaded</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm text-center p-3">
+                    <div class="fs-2 mb-1">🔍</div>
+                    <div class="fs-3 fw-bold text-success">@Report.TextSearchesToday</div>
+                    <div class="text-muted small">Text Searches</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm text-center p-3">
+                    <div class="fs-2 mb-1">👥</div>
+                    <div class="fs-3 fw-bold text-info">@Report.ActiveUsersToday</div>
+                    <div class="text-muted small">Active Users</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 shadow-sm text-center p-3">
+                    <div class="fs-2 mb-1">🤖</div>
+                    <div class="fs-3 fw-bold text-warning">@Report.TokenUsageByAgent.Count</div>
+                    <div class="text-muted small">Agents Active</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Token usage chart -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header">Token Usage by Agent</div>
+                    <div class="card-body">
+                        <canvas id="tokenChart" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header">Agent Activity Table</div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Agent</th>
+                                    <th class="text-end">Messages</th>
+                                    <th class="text-end">Input</th>
+                                    <th class="text-end">Output</th>
+                                    <th class="text-end">Cached</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var kv in Report.TokenUsageByAgent)
+                                {
+                                    <tr>
+                                        <td>@kv.Value.AgentName</td>
+                                        <td class="text-end">@kv.Value.TotalMessages</td>
+                                        <td class="text-end">@kv.Value.TotalInput</td>
+                                        <td class="text-end">@kv.Value.TotalOutput</td>
+                                        <td class="text-end">@kv.Value.TotalCached</td>
+                                    </tr>
+                                }
+                                @if (!Report.TokenUsageByAgent.Any())
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted py-3">No data for this date.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-muted small text-end">Report for @Report.Date.ToString("dddd, MMMM d, yyyy") · Auto-refreshes every 60s</p>
+    }
+</div>
+
+@code {
+    private DailyReport? Report { get; set; }
+    private DateTime SelectedDate { get; set; } = DateTime.UtcNow.Date;
+    private bool IsLoading { get; set; }
+    private System.Threading.Timer? _refreshTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadReport();
+        _refreshTimer = new System.Threading.Timer(async _ =>
+        {
+            await InvokeAsync(async () =>
+            {
+                await LoadReport();
+                StateHasChanged();
+            });
+        }, null, TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(60));
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender && Report is not null)
+            await RenderChartAsync();
+    }
+
+    private async Task LoadReport()
+    {
+        IsLoading = true;
+        StateHasChanged();
+        try
+        {
+            Report = await QdrantService.GetDailyReportAsync(SelectedDate);
+        }
+        catch { Report = new DailyReport { Date = SelectedDate.Date }; }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
+        }
+        await RenderChartAsync();
+    }
+
+    private async Task RenderChartAsync()
+    {
+        if (Report is null) return;
+        try
+        {
+            var labels = Report.TokenUsageByAgent.Keys.ToArray();
+            var inputData = Report.TokenUsageByAgent.Values.Select(v => v.TotalInput).ToArray();
+            var outputData = Report.TokenUsageByAgent.Values.Select(v => v.TotalOutput).ToArray();
+            await JS.InvokeVoidAsync("renderTokenChart", "tokenChart", labels, inputData, outputData);
+        }
+        catch { /* Chart.js may not be loaded yet */ }
+    }
+
+    public void Dispose() => _refreshTimer?.Dispose();
+}

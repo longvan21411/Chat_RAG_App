@@ -1,0 +1,47 @@
+﻿@page "/"
+@attribute [Authorize]
+
+<PageTitle>Home — Chat RAG App</PageTitle>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <h1 class="display-4 mb-3">🤖 Chat RAG App</h1>
+            <p class="lead text-muted mb-5">An AI-powered chat application with Retrieval-Augmented Generation, image search, and multiple agents.</p>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="fs-1 mb-3">💬</div>
+                            <h5 class="card-title">Chat</h5>
+                            <p class="card-text text-muted">Chat with AI agents powered by GPT-4o. Supports multiple agents and conversation history.</p>
+                            <a href="/chat" class="btn btn-primary mt-2">Start Chatting</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="fs-1 mb-3">🖼️</div>
+                            <h5 class="card-title">Images</h5>
+                            <p class="card-text text-muted">Upload images in bulk, add metadata, and search using semantic text queries via Qdrant.</p>
+                            <a href="/images" class="btn btn-primary mt-2">Manage Images</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <div class="fs-1 mb-3">📊</div>
+                            <h5 class="card-title">Dashboard</h5>
+                            <p class="card-text text-muted">View daily reports: images uploaded, searches, active users, and token usage by agent.</p>
+                            <a href="/dashboard" class="btn btn-primary mt-2">View Dashboard</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
