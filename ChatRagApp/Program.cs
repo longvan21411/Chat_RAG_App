@@ -2,37 +2,50 @@ using ChatRagApp.Agents;
 using ChatRagApp.Components;
 using ChatRagApp.Mcp;
 using ChatRagApp.Services;
+using Grpc.Net.Client;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Qdrant.Client;
+using Qdrant.Client.Grpc;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
+var googleClientId = config["Google:ClientId"];
+var googleClientSecret = config["Google:ClientSecret"];
+var hasGoogleAuth = !string.IsNullOrWhiteSpace(googleClientId) && !string.IsNullOrWhiteSpace(googleClientSecret);
 
 // ── Authentication ──────────────────────────────────────────────────────────
-builder.Services.AddAuthentication(options =>
+var authenticationBuilder = builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 })
 .AddCookie(options =>
 {
-    options.LoginPath = "/account/login";
+    options.LoginPath = "/login";
     options.LogoutPath = "/account/logout";
     options.SlidingExpiration = true;
     options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-})
-.AddGoogle(options =>
-{
-    options.ClientId = config["Google:ClientId"] ?? string.Empty;
-    options.ClientSecret = config["Google:ClientSecret"] ?? string.Empty;
-    options.CallbackPath = "/signin-google";
-    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 });
+
+if (hasGoogleAuth)
+{
+    authenticationBuilder.AddGoogle(options =>
+    {
+        options.ClientId = googleClientId!;
+        options.ClientSecret = googleClientSecret!;
+        options.CallbackPath = "/signin-google";
+        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    });
+}
+else
+{
+    builder.Logging.AddFilter("Microsoft.AspNetCore.Authentication", LogLevel.Warning);
+}
 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
@@ -43,9 +56,20 @@ builder.Services.AddSingleton(_ =>
     var host = config["Qdrant:Host"] ?? "localhost";
     var port = int.TryParse(config["Qdrant:GrpcPort"], out var p) ? p : 6334;
     var apiKey = config["Qdrant:ApiKey"];
-    return string.IsNullOrEmpty(apiKey)
-        ? new QdrantClient(host, port)
-        : new QdrantClient(host, port, apiKey: apiKey);
+
+    var handler = new SocketsHttpHandler
+    {
+        EnableMultipleHttp2Connections = true,
+        UseProxy = false
+    };
+
+    var channel = GrpcChannel.ForAddress($"http://{host}:{port}", new GrpcChannelOptions
+    {
+        HttpHandler = handler
+    });
+
+    var grpcClient = new QdrantGrpcClient(channel.CreateCallInvoker());
+    return new QdrantClient(grpcClient);
 });
 
 // ── Services ────────────────────────────────────────────────────────────────
@@ -100,7 +124,12 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStatusCodePagesWithReExecute("/not-found");
-app.UseHttpsRedirection();
+
+if (app.Configuration["ASPNETCORE_URLS"]?.Contains("https://", StringComparison.OrdinalIgnoreCase) == true)
+{
+    app.UseHttpsRedirection();
+}
+
 app.UseStaticFiles();
 app.UseAntiforgery();
 app.UseAuthentication();

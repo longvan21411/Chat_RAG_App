@@ -2,6 +2,7 @@ using ChatRagApp.Models;
 using ChatRagApp.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -13,19 +14,21 @@ public class AccountController : Controller
 {
     private readonly IQdrantService _qdrant;
     private readonly ILogger<AccountController> _logger;
+    private readonly IConfiguration _configuration;
 
-    public AccountController(IQdrantService qdrant, ILogger<AccountController> logger)
+    public AccountController(IQdrantService qdrant, ILogger<AccountController> logger, IConfiguration configuration)
     {
         _qdrant = qdrant;
         _logger = logger;
+        _configuration = configuration;
     }
 
     [HttpGet("login")]
     [AllowAnonymous]
     public IActionResult Login(string? returnUrl = null)
     {
-        ViewData["ReturnUrl"] = returnUrl ?? "/";
-        return View();
+        var safeReturnUrl = string.IsNullOrWhiteSpace(returnUrl) || !Url.IsLocalUrl(returnUrl) ? "/" : returnUrl;
+        return Redirect($"/login?returnUrl={Uri.EscapeDataString(safeReturnUrl)}");
     }
 
     [HttpGet("external-login")]
@@ -34,6 +37,13 @@ public class AccountController : Controller
     {
         if (string.IsNullOrWhiteSpace(returnUrl) || !Url.IsLocalUrl(returnUrl))
             returnUrl = "/";
+
+        if (!string.Equals(provider, GoogleDefaults.AuthenticationScheme, StringComparison.OrdinalIgnoreCase) ||
+            string.IsNullOrWhiteSpace(_configuration["Google:ClientId"]) ||
+            string.IsNullOrWhiteSpace(_configuration["Google:ClientSecret"]))
+        {
+            return Redirect($"/login?error=provider_unavailable&returnUrl={Uri.EscapeDataString(returnUrl)}");
+        }
 
         var redirectUrl = Url.Action(nameof(ExternalLoginCallback), "Account", new { returnUrl });
         var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
@@ -54,7 +64,7 @@ public class AccountController : Controller
             if (!authResult.Succeeded)
             {
                 _logger.LogWarning("External login callback: authentication not succeeded");
-                return Redirect("/account/login?error=auth_failed");
+                return Redirect("/login?error=auth_failed");
             }
 
             var principal = authResult.Principal;
@@ -63,7 +73,7 @@ public class AccountController : Controller
             var nameId = principal.FindFirstValue(ClaimTypes.NameIdentifier) ?? email;
 
             if (string.IsNullOrEmpty(email))
-                return Redirect("/account/login?error=no_email");
+                return Redirect("/login?error=no_email");
 
             // Upsert user in Qdrant
             var existingUser = await _qdrant.GetUserByEmailAsync(email);
@@ -92,6 +102,6 @@ public class AccountController : Controller
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return Redirect("/account/login");
+        return Redirect("/login");
     }
 }
