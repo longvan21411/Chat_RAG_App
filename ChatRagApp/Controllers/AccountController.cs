@@ -131,6 +131,58 @@ public class AccountController : Controller
         return Redirect("/login?registered=true");
     }
 
+    [HttpPost("update-profile")]
+    [Authorize]
+    public async Task<IActionResult> UpdateProfile(string displayName, string? email)
+    {
+        if (string.IsNullOrWhiteSpace(displayName))
+        {
+            return Redirect("/account/profile?error=missing_fields");
+        }
+
+        var normalizedEmail = email?.Trim() ?? string.Empty;
+        var currentUserName = User.FindFirstValue("preferred_username") ?? string.Empty;
+        var currentEmail = User.FindFirstValue(ClaimTypes.Email) ?? string.Empty;
+        var provider = User.FindFirstValue("provider") ?? "cookie";
+
+        var user = !string.IsNullOrWhiteSpace(currentUserName)
+            ? await _qdrant.GetUserByUserNameAsync(currentUserName)
+            : null;
+
+        if (user is null && !string.IsNullOrWhiteSpace(currentEmail))
+        {
+            user = await _qdrant.GetUserByEmailAsync(currentEmail);
+        }
+
+        user ??= new AppUser
+        {
+            Id = Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var parsedId) ? parsedId : Guid.NewGuid(),
+            UserName = currentUserName,
+            Email = currentEmail,
+            DisplayName = User.Identity?.Name ?? currentUserName,
+            Provider = provider,
+            IsActive = true
+        };
+
+        if (!string.IsNullOrWhiteSpace(normalizedEmail))
+        {
+            var existingByEmail = await _qdrant.GetUserByEmailAsync(normalizedEmail);
+            if (existingByEmail is not null && existingByEmail.Id != user.Id)
+            {
+                return Redirect("/account/profile?error=email_taken");
+            }
+        }
+
+        user.DisplayName = displayName.Trim();
+        user.Email = normalizedEmail;
+        user.LastLogin = DateTime.UtcNow;
+
+        await _qdrant.UpsertUserAsync(user);
+        await SignInUserAsync(user, User.IsInRole("Admin"));
+
+        return Redirect("/account/profile?saved=true");
+    }
+
     [HttpGet("external-login")]
     [AllowAnonymous]
     public IActionResult ExternalLogin(string provider = "Google", string returnUrl = "/")

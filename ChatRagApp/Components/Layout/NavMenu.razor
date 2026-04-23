@@ -1,4 +1,8 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Routing
+@using System.Security.Claims
+
+<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">🤖 Chat RAG</a>
     </div>
@@ -32,5 +36,61 @@
             </NavLink>
         </div>
     </nav>
+
+    <AuthorizeView>
+        <Authorized Context="authState">
+            <div class="user-panel">
+                <a class="user-card" href="/account/profile">
+                    <div class="user-avatar">@GetInitials(authState.User)</div>
+                    <div class="user-meta">
+                        <div class="user-name">@GetDisplayName(authState.User)</div>
+                        <div class="user-subtitle">@GetSubtitle(authState.User)</div>
+                    </div>
+                </a>
+            </div>
+        </Authorized>
+    </AuthorizeView>
 </div>
+
+@code {
+    private static string GetDisplayName(ClaimsPrincipal user)
+    {
+        var displayName = user.Identity?.Name;
+        if (!string.IsNullOrWhiteSpace(displayName))
+        {
+            return displayName;
+        }
+
+        var userName = user.FindFirst("preferred_username")?.Value;
+        if (!string.IsNullOrWhiteSpace(userName))
+        {
+            return userName;
+        }
+
+        return "User";
+    }
+
+    private static string GetSubtitle(ClaimsPrincipal user)
+    {
+        var email = user.FindFirst(ClaimTypes.Email)?.Value;
+        if (!string.IsNullOrWhiteSpace(email))
+        {
+            return email;
+        }
+
+        var provider = user.FindFirst("provider")?.Value;
+        return string.IsNullOrWhiteSpace(provider) ? "Profile" : provider;
+    }
+
+    private static string GetInitials(ClaimsPrincipal user)
+    {
+        var source = GetDisplayName(user)
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Take(2)
+            .Select(part => char.ToUpperInvariant(part[0]));
+
+        var initials = new string(source.ToArray());
+        return string.IsNullOrWhiteSpace(initials) ? "U" : initials;
+    }
+}
 

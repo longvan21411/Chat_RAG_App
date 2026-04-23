@@ -22,6 +22,26 @@ Responsibilities:
 - Show a safe warning message when Google OAuth is not configured.
 - Forward users into `/account/external-login` for the real authentication challenge.
 
+### `Register.razor`
+
+Implements the `/register` page for local account creation.
+
+Responsibilities:
+
+- Render a local account registration form.
+- Send new account data to the account controller.
+- Return the user to the login page after successful registration.
+
+### `Profile.razor`
+
+Implements the authenticated account details page.
+
+Responsibilities:
+
+- Show the signed-in user's current profile information.
+- Allow the user to complete or correct missing profile fields.
+- Refresh the signed-in cookie after profile updates so UI displays current user data.
+
 ---
 
 ## Expected Login Flow
@@ -29,15 +49,17 @@ Responsibilities:
 1. An unauthenticated user requests a protected route.
 2. The app redirects the user to `/login?returnUrl=...`.
 3. `Login.razor` renders the login UI.
-4. If user input a valid user name and password, the page allow to sign-in.
-5. System support a technical account to login into the system. The technical account suggestion as username = 'admin' and password = 'admin'.
-6. If user don't have a valid account, user considers to use the open connect id.
-7. If `Google:ClientId` and `Google:ClientSecret` are present, the page shows the Google sign-in button.
-8. Clicking the button navigates to `/account/external-login?provider=Google&returnUrl=...`.
-9. The controller starts the OAuth challenge.
-10. After callback, the controller signs the user in with cookies and redirects back to the original local `returnUrl`.
-11. In case, you don't have account before, a given link help to register account.
-12. After registering success, the system will redirect to login page.
+4. The user can sign in with a valid local username and password.
+5. The system supports a technical development account with username `admin` and password `admin`.
+6. If the user does not have a local account, the page provides a registration link to `/register`.
+7. After successful registration, the system redirects back to `/login?registered=true`.
+8. If Google OpenID Connect is configured, the page also shows the Google sign-in button.
+9. Clicking the Google button navigates to `/account/external-login?provider=Google&returnUrl=...`.
+10. The controller starts the external authentication challenge.
+11. After successful local or Google sign-in, the controller signs the user in with cookies and redirects back to the original local `returnUrl`.
+12. After login succeeds, the app displays user information at the bottom of the left navigation.
+13. Clicking the avatar or user card navigates to the authenticated profile page.
+14. The profile page allows the user to review and update missing profile information.
 ---
 
 ## Configuration Requirements
@@ -70,6 +92,7 @@ Behavior:
 Supported values currently handled by the page:
 
 - `auth_failed`
+- `invalid_credentials`
 - `no_email`
 - `provider_unavailable`
 
@@ -90,4 +113,6 @@ These are mapped into user-friendly messages on the page.
 
 - `ChatRagApp/Controllers/AccountController.cs` — external login, callback, logout.
 - `ChatRagApp/Components/RedirectToLogin.razor` — redirects unauthorized users to `/login`.
+- `ChatRagApp/Components/Pages/Account/Register.razor` — local account registration page.
+- `ChatRagApp/Components/Pages/Account/Profile.razor` — authenticated user profile page.
 - `ChatRagApp/Program.cs` — authentication and cookie configuration.

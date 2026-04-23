@@ -1,0 +1,130 @@
+@page "/account/profile"
+@attribute [Authorize]
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IQdrantService QdrantService
+
+<PageTitle>Profile — Chat RAG App</PageTitle>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:3.5rem;height:3.5rem;font-weight:700;">
+                            @Initials
+                        </div>
+                        <div>
+                            <h1 class="h3 mb-1">Your Profile</h1>
+                            <p class="text-muted mb-0">Review and complete your account information.</p>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Message))
+                    {
+                        <div class="alert @MessageClass" role="alert">
+                            @Message
+                        </div>
+                    }
+
+                    @if (AccountProfile is null)
+                    {
+                        <p class="text-muted mb-0">Loading profile...</p>
+                    }
+                    else
+                    {
+                        <form method="post" action="/account/update-profile">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label" for="displayName">Display name</label>
+                                    <input class="form-control" id="displayName" name="displayName" value="@AccountProfile.DisplayName" required />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="email">Email</label>
+                                    <input class="form-control" id="email" name="email" type="email" value="@AccountProfile.Email" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="userName">Username</label>
+                                    <input class="form-control" id="userName" value="@AccountProfile.UserName" readonly />
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label" for="provider">Provider</label>
+                                    <input class="form-control" id="provider" value="@AccountProfile.Provider" readonly />
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary mt-4">Save profile</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    private bool? Saved { get; set; }
+
+    [SupplyParameterFromQuery]
+    private string? Error { get; set; }
+
+    private AppUser? AccountProfile { get; set; }
+
+    private string Initials
+    {
+        get
+        {
+            var source = !string.IsNullOrWhiteSpace(AccountProfile?.DisplayName) ? AccountProfile!.DisplayName : AccountProfile?.UserName ?? "User";
+            var initials = source
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Take(2)
+                .Select(part => char.ToUpperInvariant(part[0]))
+                .ToArray();
+
+            return initials.Length == 0 ? "U" : new string(initials);
+        }
+    }
+
+    private string? Message => Saved == true
+        ? "Profile updated successfully."
+        : Error switch
+        {
+            "missing_fields" => "Display name is required.",
+            "email_taken" => "That email address is already in use by another account.",
+            _ => null
+        };
+
+    private string MessageClass => Saved == true ? "alert-success" : "alert-danger";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var userName = user.FindFirst("preferred_username")?.Value ?? string.Empty;
+        var email = user.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? string.Empty;
+        var provider = user.FindFirst("provider")?.Value ?? "cookie";
+
+        AccountProfile = !string.IsNullOrWhiteSpace(userName)
+            ? await QdrantService.GetUserByUserNameAsync(userName)
+            : null;
+
+        if (AccountProfile is null && !string.IsNullOrWhiteSpace(email))
+        {
+            AccountProfile = await QdrantService.GetUserByEmailAsync(email);
+        }
+
+        if (AccountProfile is null)
+        {
+            AccountProfile = new AppUser
+            {
+                UserName = userName,
+                Email = email,
+                DisplayName = user.Identity?.Name ?? userName,
+                Provider = provider,
+                IsActive = true
+            };
+        }
+    }
+}
