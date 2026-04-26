@@ -6,12 +6,12 @@ This folder contains the routed page-level UI for Chat RAG App.
 
 Pages in this folder are responsible for user-facing application features that render inside the shared layout shell, including:
 
-- the authenticated landing experience
-- multi-agent chat interactions
-- image upload and semantic image search
-- operational reporting and dashboard views
-- fallback error and not-found experiences
-- remaining scaffold or demo pages that are not core product flows
+- the authenticated landing experience.
+- multi-agent chat interactions.
+- image upload and semantic image search.
+- operational reporting and dashboard views.
+- fallback error and not-found experiences.
+- remaining scaffold or demo pages that are not core product flows.
 
 These pages should stay focused on page composition, route handling, and user interactions. Shared shell behavior belongs in `Components/Layout`, while business logic and integrations belong in services, controllers, and agents.
 
