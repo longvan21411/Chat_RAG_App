@@ -10,7 +10,9 @@ Layout components in this folder are responsible for the persistent frame around
 - the top application bar
 - the signed-in user summary entry
 - reconnect and circuit recovery UI for interactive Blazor sessions
-- layout-specific styling and client-side behavior
+- layout-specific styling and client-side behavior.
+- the main layout should implement two different modes as dark and light style.
+- user is able to manually change under button "Dark/Light" under user information in the left sidebar navigation.
 
 These components should provide a consistent application shell across all authenticated pages.
 

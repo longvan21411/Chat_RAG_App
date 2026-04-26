@@ -47,12 +47,21 @@
                         <div class="user-subtitle">@GetSubtitle(authState.User)</div>
                     </div>
                 </a>
+
+                <button type="button" class="theme-toggle" @onclick="OnToggleTheme">
+                    <span class="theme-toggle-label">Dark/Light</span>
+                    <span class="theme-toggle-value">@(IsDarkMode ? "Dark" : "Light")</span>
+                </button>
             </div>
         </Authorized>
     </AuthorizeView>
 </div>
 
 @code {
+    [Parameter] public bool IsDarkMode { get; set; }
+
+    [Parameter] public EventCallback OnToggleTheme { get; set; }
+
     private static string GetDisplayName(ClaimsPrincipal user)
     {
         var displayName = user.Identity?.Name;
