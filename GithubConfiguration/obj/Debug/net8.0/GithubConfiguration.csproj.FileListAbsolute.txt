@@ -1,0 +1,12 @@
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/bin/Debug/net8.0/GithubConfiguration.deps.json
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/bin/Debug/net8.0/GithubConfiguration.dll
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/bin/Debug/net8.0/GithubConfiguration.pdb
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/GithubConfiguration.GeneratedMSBuildEditorConfig.editorconfig
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/GithubConfiguration.AssemblyInfoInputs.cache
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/GithubConfiguration.AssemblyInfo.cs
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/GithubConfiguration.csproj.CoreCompileInputs.cache
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/GithubConfiguration.sourcelink.json
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/GithubConfiguration.dll
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/refint/GithubConfiguration.dll
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/GithubConfiguration.pdb
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/ref/GithubConfiguration.dll

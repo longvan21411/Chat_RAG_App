@@ -1,8 +1,10 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatRagApp", "ChatRagApp\ChatRagApp.csproj", "{40A35792-C081-C1C8-99CE-EA6459D34239}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GithubConfiguration", "GithubConfiguration\GithubConfiguration.csproj", "{36EB11AF-479F-45F6-8910-7D3B5452941E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,6 +16,10 @@ Global
 		{40A35792-C081-C1C8-99CE-EA6459D34239}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40A35792-C081-C1C8-99CE-EA6459D34239}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40A35792-C081-C1C8-99CE-EA6459D34239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36EB11AF-479F-45F6-8910-7D3B5452941E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36EB11AF-479F-45F6-8910-7D3B5452941E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36EB11AF-479F-45F6-8910-7D3B5452941E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36EB11AF-479F-45F6-8910-7D3B5452941E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
