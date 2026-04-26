@@ -1,6 +1,7 @@
 using ChatRagApp.Models;
 using ChatRagApp.Services;
 using Microsoft.Extensions.Logging;
+using OpenAI;
 
 namespace ChatRagApp.Agents;
 
@@ -11,11 +12,11 @@ public class ImageAnalystAgent : BaseAgent
 {
     public ImageAnalystAgent(
         AgentConfig config,
-        string apiKey,
+        OpenAIClient? openAIClient,
         IImageService imageService,
         IChatHistoryService historyService,
         ILogger<ImageAnalystAgent> logger)
-        : base(config, apiKey, imageService, historyService, logger) { }
+        : base(config, openAIClient, imageService, historyService, logger) { }
 
     public override async Task<AgentResponse> ChatAsync(string userMessage, string sessionId, string userId, CancellationToken ct = default)
     {

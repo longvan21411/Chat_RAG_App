@@ -10,3 +10,4 @@
 /home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/refint/GithubConfiguration.dll
 /home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/GithubConfiguration.pdb
 /home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/ref/GithubConfiguration.dll
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/GithubConfiguration.csproj.AssemblyReference.cache

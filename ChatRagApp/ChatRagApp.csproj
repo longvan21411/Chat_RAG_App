@@ -8,9 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Markdig" Version="0.37.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.19" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.74.0" />
     <PackageReference Include="ModelContextProtocol.AspNetCore" Version="1.2.0" />
+    <PackageReference Include="OpenAI" Version="2.9.1" />
     <PackageReference Include="Qdrant.Client" Version="1.17.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
   </ItemGroup>

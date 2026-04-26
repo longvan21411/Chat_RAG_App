@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
+using OpenAI;
 
 namespace ChatRagApp.Agents;
 
@@ -23,7 +24,7 @@ public abstract class BaseAgent : IAgent
 
     protected BaseAgent(
         AgentConfig config,
-        string apiKey,
+        OpenAIClient? openAIClient,
         IImageService imageService,
         IChatHistoryService historyService,
         ILogger logger)
@@ -33,12 +34,12 @@ public abstract class BaseAgent : IAgent
         _historyService = historyService;
         _logger = logger;
 
-        if (!string.IsNullOrWhiteSpace(apiKey))
+        if (openAIClient is not null && !string.IsNullOrWhiteSpace(config.LlmModel))
         {
             try
             {
                 var kernel = Kernel.CreateBuilder()
-                    .AddOpenAIChatCompletion(config.LlmModel, apiKey)
+                    .AddOpenAIChatCompletion(config.LlmModel, openAIClient)
                     .Build();
                 _chatService = kernel.GetRequiredService<IChatCompletionService>();
             }
@@ -69,7 +70,7 @@ public abstract class BaseAgent : IAgent
 
         if (_chatService is null)
         {
-            responseContent = "⚠️ LLM not configured. Please set **OpenAI:ApiKey** in appsettings.json.";
+            responseContent = "⚠️ LLM not configured. Please configure the agent token, endpoint, and model name.";
             tokenUsage = TokenUsage.Empty;
         }
         else

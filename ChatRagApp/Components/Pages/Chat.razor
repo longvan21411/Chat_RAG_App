@@ -1,16 +1,18 @@
 @page "/chat"
 @rendermode InteractiveServer
 @attribute [Authorize]
+@using Markdig
+@using Microsoft.AspNetCore.Components
 @inject AgentFactory AgentFactory
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime JS
 @implements IDisposable
 
-<PageTitle>Chat � Chat RAG App</PageTitle>
+<PageTitle>Chat  Chat RAG App</PageTitle>
 
-<div class="container-fluid py-3" style="max-width:960px">
+<div class="chat-page container-fluid py-3">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1 class="mb-0">Chat @SelectedAgent?.Name</h1>
+        <h3 class="mb-0">Chat @SelectedAgent?.Name</h3>
         <div class="d-flex gap-2 align-items-center">
             <label class="form-label mb-0 text-muted small">Agent:</label>
             <select class="form-select form-select-sm" style="width:200px"
@@ -25,84 +27,91 @@
         </div>
     </div>
 
-    <!-- Chat window -->
-    <div class="card border-0 shadow-sm mb-3" style="height:480px">
-        <div class="card-body d-flex flex-column p-0">
-            <div class="flex-grow-1 overflow-auto p-3" @ref="_chatContainer" id="chat-container">
-                @if (!Messages.Any())
-                {
-                    <div class="text-center text-muted py-5">                        
-                        <p>Start a conversation with <strong>@SelectedAgent?.Name</strong></p>
-                    </div>
-                }
-                @foreach (var msg in Messages)
-                {
-                    <div class="d-flex mb-3 @(msg.Role == "user" ? "justify-content-end" : "justify-content-start")">
-                        <div class="@(msg.Role == "user" ? "bg-primary text-white" : "bg-light") rounded-3 px-3 py-2"
-                             style="max-width:75%; white-space:pre-wrap; word-break:break-word">
-                            @if (msg.Role == "assistant")
-                            {
-                                <div class="fw-semibold text-muted small mb-1">@SelectedAgent?.Name</div>
-                            }
-                            @msg.Content
-                            @if (msg.Role == "assistant" && msg.TokenUsage.Total > 0)
-                            {
-                                <div class="text-muted small mt-1">
-                                    ?? in:@msg.TokenUsage.InputTokens out:@msg.TokenUsage.OutputTokens
-                                </div>
-                            }
+    <div class="chat-layout">
+        <!-- Chat window -->
+        <div class="chat-window card border-0 shadow-sm mb-3">
+            <div class="card-body d-flex flex-column p-0">
+                <div class="chat-messages flex-grow-1 overflow-auto p-3" @ref="_chatContainer" id="chat-container">
+                    @if (!Messages.Any())
+                    {
+                        <div class="chat-empty-state text-center text-muted py-5">
+                            <p>Start a conversation with <strong>@SelectedAgent?.Name</strong></p>
                         </div>
-                    </div>
-                }
-                @if (IsLoading)
-                {
-                    <div class="d-flex justify-content-start mb-3">
-                        <div class="bg-light rounded-3 px-3 py-2">
-                            <span class="spinner-border spinner-border-sm me-2"></span>
-                            <span class="text-muted">@SelectedAgent?.Name is thinking...</span>
+                    }
+                    @foreach (var msg in Messages)
+                    {
+                        <div class="chat-message-row d-flex mb-3 @(msg.Role == "user" ? "justify-content-end" : "justify-content-start")">
+                            <div class="chat-bubble @(msg.Role == "user" ? "chat-bubble-user" : "chat-bubble-assistant")" tabindex="@(msg.Role == "assistant" ? "0" : null)">
+                                @if (msg.Role == "assistant")
+                                {
+                                    <div class="chat-agent-name fw-semibold small mb-1">@SelectedAgent?.Name</div>
+                                }
+                                <div class="chat-message-content">@RenderMessageContent(msg)</div>
+                                @if (msg.Role == "assistant" && msg.TokenUsage.Total > 0)
+                                {
+                                    <div class="chat-token-usage small mt-1">
+                                        in: @msg.TokenUsage.InputTokens out: @msg.TokenUsage.OutputTokens
+                                    </div>
+                                }
+                            </div>
                         </div>
+                    }
+                    @if (IsLoading)
+                    {
+                        <div class="chat-message-row d-flex justify-content-start mb-3">
+                            <div class="chat-bubble chat-bubble-assistant">
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                                <span class="chat-agent-name">@SelectedAgent?.Name is thinking...</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>        
+    </div>
+    
+    <div class="chat-composer card border-0 shadow-sm">
+            <div class="card-body">
+                @* @if (SuggestedQuestions.Any())
+                {
+                    <div class="chat-suggestions mb-3 d-flex flex-wrap gap-2">
+                        @foreach (var q in SuggestedQuestions)
+                        {
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    @onclick="() => UseQuestion(q)" disabled="@IsLoading">
+                                @q
+                            </button>
+                        }
                     </div>
+                } *@
+
+                <div class="input-group">
+                    <textarea class="form-control" rows="2" placeholder="Type your message..."
+                              @bind="UserInput" @bind:event="oninput"
+                              @onkeydown="HandleKeyDown" disabled="@IsLoading"
+                              style="resize:none"></textarea>
+                    <button class="btn btn-primary px-4" @onclick="SendMessage"
+                            disabled="@(IsLoading || string.IsNullOrWhiteSpace(UserInput))">
+                        Send
+                    </button>
+                </div>
+
+                @if (SessionTokens.Total > 0)
+                {
+                    <p class="chat-session-tokens text-muted small mt-2 text-end">
+                        Session tokens input: @SessionTokens.InputTokens output: @SessionTokens.OutputTokens cached: @SessionTokens.CachedTokens
+                    </p>
                 }
             </div>
         </div>
-    </div>
-
-    <!-- Suggested questions -->
-    @if (SuggestedQuestions.Any())
-    {
-        <div class="mb-3 d-flex flex-wrap gap-2">
-            @foreach (var q in SuggestedQuestions)
-            {
-                <button class="btn btn-sm btn-outline-secondary"
-                        @onclick="() => UseQuestion(q)" disabled="@IsLoading">
-                    @q
-                </button>
-            }
-        </div>
-    }
-
-    <!-- Input -->
-    <div class="input-group">
-        <textarea class="form-control" rows="2" placeholder="Type your message�"
-                  @bind="UserInput" @bind:event="oninput"
-                  @onkeydown="HandleKeyDown" disabled="@IsLoading"
-                  style="resize:none"></textarea>
-        <button class="btn btn-primary px-4" @onclick="SendMessage"
-                disabled="@(IsLoading || string.IsNullOrWhiteSpace(UserInput))">
-            Send
-        </button>
-    </div>
-
-    <!-- Token stats -->
-    @if (SessionTokens.Total > 0)
-    {
-        <p class="text-muted small mt-2 text-end">
-            Session tokens � input: @SessionTokens.InputTokens � output: @SessionTokens.OutputTokens � cached: @SessionTokens.CachedTokens
-        </p>
-    }
 </div>
 
 @code {
+    private static readonly MarkdownPipeline MarkdownPipeline = new MarkdownPipelineBuilder()
+        .DisableHtml()
+        .UseAdvancedExtensions()
+        .Build();
+
     private List<IAgent> Agents { get; set; } = [];
     private string SelectedAgentId { get; set; } = string.Empty;
     private IAgent? SelectedAgent => Agents.FirstOrDefault(a => a.Id == SelectedAgentId);
@@ -194,6 +203,17 @@
         UserInput = q;
         await SendMessage();
     }
+
+    private static RenderFragment RenderMessageContent(ChatMessage msg) => builder =>
+    {
+        if (msg.Role == "assistant")
+        {
+            builder.AddMarkupContent(0, Markdown.ToHtml(msg.Content ?? string.Empty, MarkdownPipeline));
+            return;
+        }
+
+        builder.AddContent(1, msg.Content);
+    };
 
     public void Dispose() { }
 }

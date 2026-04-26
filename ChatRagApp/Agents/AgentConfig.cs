@@ -7,4 +7,7 @@ public class AgentConfig
     public string LlmModel { get; set; } = "gpt-4o";
     public int MaxTokens { get; set; } = 2048;
     public string SystemPrompt { get; set; } = "You are a helpful assistant.";
+    public string Instructions { get; set; } = string.Empty;
+    public string Endpoint { get; set; } = string.Empty;
+    public string Token { get; set; } = string.Empty;
 }

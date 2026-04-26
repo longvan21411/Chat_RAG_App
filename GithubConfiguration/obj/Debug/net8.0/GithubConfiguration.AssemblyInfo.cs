@@ -10,10 +10,11 @@
 using System;
 using System.Reflection;
 
+[assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("78a15015-a49b-491b-a229-8b2919b2b181")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("GithubConfiguration")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3c2d230ca83bb12f71b98dcc3dfe42e361f27256")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+56c30e4347f6cee18195072a2da535df9d66b7a1")]
 [assembly: System.Reflection.AssemblyProductAttribute("GithubConfiguration")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GithubConfiguration")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
