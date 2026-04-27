@@ -1,0 +1,19 @@
+<div class="top-row px-4 d-flex justify-content-between align-items-center">
+    <div class="top-row-branding">
+        <span class="top-row-title">Chat RAG App</span>
+        <span class="top-row-mode">@(IsDarkMode ? "Dark mode" : "Light mode")</span>
+    </div>
+    <AuthorizeView>
+        <Authorized>
+            <div class="top-row-actions">
+                <span class="top-row-user">@context.User.Identity?.Name</span>
+                <a href="/account/logout" class="btn btn-sm btn-outline-primary">Logout</a>
+            </div>
+        </Authorized>
+    </AuthorizeView>
+</div>
+
+@code {
+    [Parameter]
+    public bool IsDarkMode { get; set; }
+}

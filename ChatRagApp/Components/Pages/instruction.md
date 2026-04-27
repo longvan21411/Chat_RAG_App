@@ -4,6 +4,8 @@
 
 This folder contains the routed page-level UI for Chat RAG App.
 
+It can also contain small page-shell support components when they are intentionally shared with layout rendering and kept presentation-only.
+
 Pages in this folder are responsible for user-facing application features that render inside the shared layout shell, including:
 
 - the authenticated landing experience.
@@ -100,6 +102,16 @@ Responsibilities:
 
 - demonstrate streamed rendering and asynchronous page loading
 - remain a sample page unless it is explicitly converted into a product feature
+
+### `Header.razor`
+
+Implements the shared header content rendered above page bodies inside the main layout.
+
+Responsibilities:
+
+- display the application title and current theme mode
+- show authenticated user identity context
+- expose layout-level actions such as logout without owning layout state or business logic
 
 ### `Account/`
 

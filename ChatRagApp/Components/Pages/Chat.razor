@@ -10,8 +10,8 @@
 
 <PageTitle>Chat  Chat RAG App</PageTitle>
 
-<div class="chat-page container-fluid py-3">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+<div name="chat-page" class="chat-page py-4">
+    <div name="chat-title" class="chat-title d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Chat @SelectedAgent?.Name</h5>
         <div class="d-flex gap-2 align-items-center">
             <label class="form-label mb-0 text-muted small">Agent:</label>
@@ -27,7 +27,7 @@
         </div>
     </div>
 
-    <div class="chat-layout">
+    <div name="chat-layout" class="chat-layout">
         <!-- Chat window -->
         <div class="chat-window card border-0 shadow-sm mb-3">
             <div class="card-body d-flex flex-column p-0">
@@ -68,11 +68,13 @@
                 </div>
             </div>
         </div>        
-    </div>
-    
-    <div class="chat-composer card border-0 shadow-sm">
-            <div class="card-body">
-                @* @if (SuggestedQuestions.Any())
+    </div>   
+     
+</div>
+
+<div name="chat-composer" class="chat-composer card border-0 shadow-sm">
+        <div class="card-body">
+                @if (SuggestedQuestions.Any())
                 {
                     <div class="chat-suggestions mb-3 d-flex flex-wrap gap-2">
                         @foreach (var q in SuggestedQuestions)
@@ -83,7 +85,7 @@
                             </button>
                         }
                     </div>
-                } *@
+                }
 
                 <div class="input-group">
                     <textarea class="form-control" rows="2" placeholder="Type your message..."
@@ -102,7 +104,6 @@
                         Session tokens input: @SessionTokens.InputTokens output: @SessionTokens.OutputTokens cached: @SessionTokens.CachedTokens
                     </p>
                 }
-            </div>
         </div>
 </div>
 
