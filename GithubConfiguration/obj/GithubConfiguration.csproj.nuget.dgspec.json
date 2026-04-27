@@ -1,31 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "D:\\VS_Code\\RAG\\Chat_RAG_App\\GithubConfiguration\\GithubConfiguration.csproj": {}
+    "/mnt/d/VS_Code/RAG/Chat_RAG_App/GithubConfiguration/GithubConfiguration.csproj": {}
   },
   "projects": {
-    "D:\\VS_Code\\RAG\\Chat_RAG_App\\GithubConfiguration\\GithubConfiguration.csproj": {
+    "/mnt/d/VS_Code/RAG/Chat_RAG_App/GithubConfiguration/GithubConfiguration.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\VS_Code\\RAG\\Chat_RAG_App\\GithubConfiguration\\GithubConfiguration.csproj",
+        "projectUniqueName": "/mnt/d/VS_Code/RAG/Chat_RAG_App/GithubConfiguration/GithubConfiguration.csproj",
         "projectName": "GithubConfiguration",
-        "projectPath": "D:\\VS_Code\\RAG\\Chat_RAG_App\\GithubConfiguration\\GithubConfiguration.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\VS_Code\\RAG\\Chat_RAG_App\\GithubConfiguration\\obj\\",
+        "projectPath": "/mnt/d/VS_Code/RAG/Chat_RAG_App/GithubConfiguration/GithubConfiguration.csproj",
+        "packagesPath": "/home/dmin/.nuget/packages/",
+        "outputPath": "/mnt/d/VS_Code/RAG/Chat_RAG_App/GithubConfiguration/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/dmin/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -43,8 +37,7 @@
           "enableAudit": "true",
           "auditLevel": "low",
           "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "10.0.200"
+        }
       },
       "frameworks": {
         "net8.0": {
@@ -79,7 +72,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.420/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

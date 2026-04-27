@@ -9,7 +9,7 @@
             <NavMenu IsDarkMode="IsDarkMode" OnToggleTheme="ToggleThemeAsync" />
         </div>
 
-        <main>
+        <main name="main-content">
             <Header IsDarkMode="IsDarkMode" />
             <article class="content px-4">
                 @Body
@@ -39,6 +39,15 @@
 
         IsDarkMode = await JS.InvokeAsync<bool>("themeManager.initialize");
         StateHasChanged();
+
+        if (Navigation.Uri.Contains("/chat"))
+        {
+            JS.InvokeVoidAsync("eval", "document.querySelector('main[name=\\'main-content\\']').classList.add('main-content-disable-scrollbar')");
+        }
+        else
+        {
+            JS.InvokeVoidAsync("eval", "document.querySelector('main[name=\\'main-content\\']').classList.remove('main-content-disable-scrollbar')");
+        }
     }
 
     private async Task ToggleThemeAsync()
