@@ -95,10 +95,22 @@ builder.Services.AddSingleton<IEmbeddingService>(sp =>
     return new EmbeddingService(logger);
 });
 
+
 builder.Services.AddScoped<IQdrantService, QdrantService>();
 builder.Services.AddScoped<IChatHistoryService, ChatHistoryService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<AgentFactory>();
+
+// Register ImageSeeder as singleton
+builder.Services.AddScoped<ImageSeeder>(sp =>
+{
+    var qdrant = sp.GetRequiredService<IQdrantService>();
+    var embedding = sp.GetRequiredService<IEmbeddingService>();
+    var imageService = sp.GetRequiredService<IImageService>();
+    var logger = sp.GetRequiredService<ILogger<ImageSeeder>>();
+    var trainedImgPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "TrainedImg");
+    return new ImageSeeder(qdrant, embedding, imageService, logger, trainedImgPath);
+});
 
 // ── MCP Server ──────────────────────────────────────────────────────────────
 builder.Services.AddMcpServer()
@@ -113,7 +125,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// ── Initialize Qdrant collections on startup ─────────────────────────────
+// ── Initialize Qdrant collections and seed images on startup ─────────────
 _ = Task.Run(async () =>
 {
     await Task.Delay(2000); // wait for Qdrant to be ready
@@ -122,10 +134,14 @@ _ = Task.Run(async () =>
         using var scope = app.Services.CreateScope();
         var qdrant = scope.ServiceProvider.GetRequiredService<IQdrantService>();
         await qdrant.InitializeCollectionsAsync();
+
+        // Seed images if needed
+        var seeder = scope.ServiceProvider.GetRequiredService<ImageSeeder>();
+        await seeder.SeedImagesIfEmptyAsync();
     }
     catch (Exception ex)
     {
-        app.Logger.LogWarning(ex, "Qdrant initialization failed — ensure Qdrant is running on localhost:6334");
+        app.Logger.LogWarning(ex, "Qdrant initialization or image seeding failed");
     }
 });
 
