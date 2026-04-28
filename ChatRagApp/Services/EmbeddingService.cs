@@ -1,6 +1,7 @@
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
+using GithubConfiguration;
 
 #pragma warning disable SKEXP0010
 
@@ -14,29 +15,34 @@ public class EmbeddingService : IEmbeddingService
 
     public bool IsConfigured => _generator is not null;
 
-    public EmbeddingService(string apiKey, string modelId, int dimension, ILogger<EmbeddingService> logger)
+    public EmbeddingService(ILogger<EmbeddingService> logger)
     {
         _logger = logger;
-        _dimension = dimension;
+       
+        var github = new GithubConfigurationInfo();
+        var config = github.GetGithubConfigurationInfo();
+        var tokenKey = config.GithubToken;
+        var model = "text-embedding-3-small";        
+         _dimension = 1536;
 
-        if (!string.IsNullOrWhiteSpace(apiKey))
+        if (!string.IsNullOrWhiteSpace(tokenKey))
         {
             try
             {
                 var kernel = Kernel.CreateBuilder()
-                    .AddOpenAIEmbeddingGenerator(modelId, apiKey)
+                    .AddOpenAIEmbeddingGenerator(model, tokenKey)
                     .Build();
                 _generator = kernel.GetRequiredService<IEmbeddingGenerator<string, Embedding<float>>>();
-                _logger.LogInformation("Embedding service initialized with model {Model}", modelId);
+                _logger.LogInformation("Embedding service initialized with model {Model}", model);
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Failed to initialize embedding service � using deterministic fallback");
+                _logger.LogWarning(ex, "Failed to initialize embedding service using deterministic fallback");
             }
         }
         else
         {
-            _logger.LogWarning("OpenAI API key not configured � using deterministic embeddings");
+            _logger.LogWarning("OpenAI API key not configured using deterministic embeddings");
         }
     }
 

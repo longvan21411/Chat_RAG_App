@@ -77,12 +77,9 @@ builder.Services.AddSingleton(_ =>
 
 // ── Services ────────────────────────────────────────────────────────────────
 builder.Services.AddSingleton<IEmbeddingService>(sp =>
-{
-    var apiKey = config["OpenAI:ApiKey"] ?? string.Empty;
-    var model = config["OpenAI:EmbeddingModel"] ?? "text-embedding-3-small";
-    var dim = int.TryParse(config["OpenAI:EmbeddingDimension"], out var d) ? d : 1536;
+{    
     var logger = sp.GetRequiredService<ILogger<EmbeddingService>>();
-    return new EmbeddingService(apiKey, model, dim, logger);
+    return new EmbeddingService(logger);
 });
 
 builder.Services.AddScoped<IQdrantService, QdrantService>();
