@@ -24,3 +24,16 @@
 /mnt/d/VS_Code/RAG/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/refint/GithubConfiguration.dll
 /mnt/d/VS_Code/RAG/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/GithubConfiguration.pdb
 /mnt/d/VS_Code/RAG/Chat_RAG_App/GithubConfiguration/obj/Debug/net8.0/ref/GithubConfiguration.dll
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\bin\Debug\net8.0\GithubConfiguration.deps.json
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\bin\Debug\net8.0\GithubConfiguration.dll
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\bin\Debug\net8.0\GithubConfiguration.pdb
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\obj\Debug\net8.0\GithubConfiguration.csproj.AssemblyReference.cache
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\obj\Debug\net8.0\GithubConfiguration.GeneratedMSBuildEditorConfig.editorconfig
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\obj\Debug\net8.0\GithubConfiguration.AssemblyInfoInputs.cache
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\obj\Debug\net8.0\GithubConfiguration.AssemblyInfo.cs
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\obj\Debug\net8.0\GithubConfiguration.csproj.CoreCompileInputs.cache
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\obj\Debug\net8.0\GithubConfiguration.sourcelink.json
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\obj\Debug\net8.0\GithubConfiguration.dll
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\obj\Debug\net8.0\refint\GithubConfiguration.dll
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\obj\Debug\net8.0\GithubConfiguration.pdb
+D:\VS_Code\RAG\Chat_RAG_App\GithubConfiguration\obj\Debug\net8.0\ref\GithubConfiguration.dll

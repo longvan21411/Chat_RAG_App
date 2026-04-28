@@ -19,8 +19,7 @@ public class EmbeddingService : IEmbeddingService
     {
         _logger = logger;
        
-        var github = new GithubConfigurationInfo();
-        var config = github.GetGithubConfigurationInfo();
+        var config = GithubConfigurationInfo.GetGithubConfigurationInfo();
         var tokenKey = config.GithubToken;
         var model = "text-embedding-3-small";        
          _dimension = 1536;
