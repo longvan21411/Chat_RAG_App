@@ -6,6 +6,7 @@
 @inject AgentFactory AgentFactory
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime JS
+@inject ILogger<Chat> Logger
 @implements IDisposable
 
 <PageTitle>Chat  Chat RAG App</PageTitle>
@@ -176,6 +177,7 @@
         }
         catch (Exception ex)
         {
+            Logger.LogError(ex, "Exception in SendMessage: {Message}", ex.Message);
             Messages.Add(new ChatMessage { Role = "assistant", Content = $"Error: {ex.Message}" });
         }
         finally

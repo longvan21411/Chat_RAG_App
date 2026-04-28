@@ -10,8 +10,21 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext();
+});
+
+// Add serilog.json config
+builder.Configuration.AddJsonFile("serilog.json", optional: true, reloadOnChange: true);
 var config = builder.Configuration;
 var googleClientId = config["Google:ClientId"];
 var googleClientSecret = config["Google:ClientSecret"];
