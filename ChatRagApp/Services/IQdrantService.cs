@@ -11,6 +11,8 @@ public interface IQdrantService
 
     Task SaveChatMessageAsync(ChatMessage message, float[] embedding, CancellationToken ct = default);
     Task<List<ChatMessage>> GetRecentChatMessagesAsync(string userId, string agentId, int limit = 5, CancellationToken ct = default);
+    Task<List<ChatMessage>> GetAllChatMessagesBySessionIdAsync(string sessionId, CancellationToken ct = default); // For chat history by session
+    Task<List<ChatMessage>> GetAllChatMessagesAsync(CancellationToken ct = default); // Fetch all chat messages
 
     Task UpsertImageAsync(ImagePoint image, float[] textEmbedding, float[] imageEmbedding, CancellationToken ct = default);
     Task<List<ImageSearchResult>> SearchImagesByTextAsync(float[] queryEmbedding, int topK = 10, CancellationToken ct = default);

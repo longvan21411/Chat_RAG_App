@@ -121,6 +121,17 @@ Note:
 
 - account pages are related to this folder structurally but are documented separately in `Components/Pages/Account/instruction.md`
 
+### `ChatHistory.razor`
+
+Implements the authenticated `/chat-history` page.
+
+Responsibilities:
+
+- Load and display chat history for a given session ID
+- Fetch chat messages from `IChatHistoryService` using the session ID from the route
+- Render a list of messages with roles and content
+- Provide a read-only view of past conversations for review or auditing
+
 ---
 
 ## Expected Page Flow

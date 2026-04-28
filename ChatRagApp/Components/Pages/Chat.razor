@@ -121,7 +121,7 @@
     private string UserInput { get; set; } = string.Empty;
     private bool IsLoading { get; set; }
     private string UserId { get; set; } = string.Empty;
-    private string SessionId { get; set; } = Guid.NewGuid().ToString();
+    private string SessionId { get; set; } = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff");
     private TokenUsage SessionTokens { get; set; } = TokenUsage.Empty;
     private ElementReference _chatContainer;
 
@@ -196,7 +196,7 @@
         Messages.Clear();
         SuggestedQuestions.Clear();
         SessionTokens = TokenUsage.Empty;
-        SessionId = Guid.NewGuid().ToString();
+        SessionId = DateTime.UtcNow.ToString("yyyyMMddHHmmssfff");
     }
 
     private async Task UseQuestion(string q)

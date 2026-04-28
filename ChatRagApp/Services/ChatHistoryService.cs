@@ -21,4 +21,16 @@ public class ChatHistoryService : IChatHistoryService
 
     public async Task<List<ChatMessage>> GetRecentMessagesAsync(string userId, string agentId, int limit = 5, CancellationToken ct = default)
         => await _qdrant.GetRecentChatMessagesAsync(userId, agentId, limit, ct);
+
+    public async Task<List<ChatMessage>> GetHistoryBySessionIdAsync(string sessionId, CancellationToken ct = default)
+    {
+        // Assuming _qdrant has a method to get messages by sessionId, otherwise filter manually
+        var allMessages = await _qdrant.GetAllChatMessagesBySessionIdAsync(sessionId, ct);
+        return allMessages.OrderBy(m => m.Timestamp).ToList();
+    }
+
+    public async Task<List<ChatMessage>> GetAllHistoryAsync(CancellationToken ct = default)
+    {
+        return await _qdrant.GetAllChatMessagesAsync(ct);
+    }
 }
