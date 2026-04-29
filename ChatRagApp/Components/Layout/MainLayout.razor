@@ -42,11 +42,11 @@
 
         if (Navigation.Uri.Contains("/chat"))
         {
-            JS.InvokeVoidAsync("eval", "document.querySelector('main[name=\\'main-content\\']').classList.add('main-content-disable-scrollbar')");
+            await JS.InvokeVoidAsync("eval", "document.querySelector('main[name=\\'main-content\\']').classList.add('main-content-disable-scrollbar')");
         }
         else
         {
-            JS.InvokeVoidAsync("eval", "document.querySelector('main[name=\\'main-content\\']').classList.remove('main-content-disable-scrollbar')");
+            await JS.InvokeVoidAsync("eval", "document.querySelector('main[name=\\'main-content\\']').classList.remove('main-content-disable-scrollbar')");
         }
     }
 

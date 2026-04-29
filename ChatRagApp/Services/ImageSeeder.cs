@@ -35,38 +35,48 @@ public class ImageSeeder
                 _logger.LogInformation("Created 'images' collection in Qdrant.");
             }
         }
+        int countofImages = 0;
+        int skippedImages = 0;
+        _logger.LogInformation("Recursively upserting all images from all subfolders in TrainedImg...");
+        if (Directory.Exists(_trainedImgPath))
+        {
+            var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".bmp" };
+            var files = Directory.GetFiles(_trainedImgPath, "*.*", SearchOption.AllDirectories)
+                .Where(f => allowedExtensions.Contains(Path.GetExtension(f).ToLowerInvariant()));
 
-        _logger.LogInformation("Upserting all images from TrainedImg...");
-        var categories = new[]
-        {
-            ("cats", "Cats"),
-            ("dogs", "Dogs"),
-            ("wild_animals", "Animals")
-        };
-        foreach (var (folder, category) in categories)
-        {
-            var dir = Path.Combine(_trainedImgPath, folder);
-            if (!Directory.Exists(dir)) continue;
-            foreach (var file in Directory.GetFiles(dir))
+            foreach (var file in files)
             {
                 var fileName = Path.GetFileName(file);
-                var imagePoint = new ImagePoint
+                var dirName = Path.GetDirectoryName(file);
+                var category = dirName != null ? Path.GetFileName(dirName) : "Unknown";
+                try
                 {
-                    Id = Guid.NewGuid(),
-                    FileName = fileName,
-                    Title = Path.GetFileNameWithoutExtension(fileName),
-                    Category = category,
-                    Description = $"Seeded image for {category}",
-                    CreatedDate = DateTime.UtcNow,
-                    IsActive = true
-                };
-                var textContent = $"{imagePoint.Title} {imagePoint.Category} {imagePoint.Description}";
-                var textEmbedding = await _embedding.GenerateEmbeddingAsync(textContent, ct);
-                var imageEmbedding = await _embedding.GenerateEmbeddingAsync(textContent + " [image]", ct);
-                await _qdrant.UpsertImageAsync(imagePoint, textEmbedding, imageEmbedding, ct);
-                _logger.LogInformation("Seeded image: {FileName}", fileName);
+                    var imagePoint = new ImagePoint
+                    {
+                        Id = Guid.NewGuid(),
+                        FileName = fileName,
+                        Title = Path.GetFileNameWithoutExtension(fileName),
+                        Category = category,
+                        Description = $"Seeded image for {category}",
+                        CreatedDate = DateTime.UtcNow,
+                        IsActive = true
+                    };
+                    var textContent = $"{imagePoint.Title} {imagePoint.Category} {imagePoint.Description}";
+                    var textEmbedding = await _embedding.GenerateEmbeddingAsync(textContent, ct);
+                    var imageEmbedding = await _embedding.GenerateEmbeddingAsync(textContent + " [image]", ct);
+                    await _qdrant.UpsertImageAsync(imagePoint, textEmbedding, imageEmbedding, ct);
+                    _logger.LogInformation("[Seeded] {FileName} in category {Category} from {Path}", fileName, category, file);
+                    countofImages++;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "[Skipped] {FileName} in category {Category} from {Path} due to error", fileName, category, file);
+                    skippedImages++;
+                }
             }
         }
+        _logger.LogInformation("Total images seeded: {Count}", countofImages);
+        _logger.LogInformation("Total images skipped: {Count}", skippedImages);
         _logger.LogInformation("Image seeding complete.");
     }
 }

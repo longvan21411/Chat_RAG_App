@@ -91,12 +91,13 @@ Implements image seeding logic for the 'images' collection in Qdrant.
 Current responsibilities:
 
 - On application startup, ensures the 'images' collection exists in Qdrant (creates it if missing)
-- Always upserts all images from the TrainedImg directory (cats, dogs, wild_animals) into the 'images' collection, regardless of whether the collection is empty
+- Always upserts all images from every subfolder in the TrainedImg directory into the 'images' collection, regardless of whether the collection is empty
+- Uses each subfolder name as the image category
 - Uses embedding service to generate text and image embeddings for each image
 - Logs seeding progress and completion
 
 Behavioral change:
-- The seeder no longer skips seeding if the collection is non-empty; it always upserts all images, ensuring the Qdrant collection is up to date with TrainedImg
+- The seeder no longer skips seeding if the collection is non-empty; it always upserts all images, ensuring the Qdrant collection is up to date with all folders and images in TrainedImg
 
 ### `IImageService.cs`
 

@@ -24,6 +24,9 @@ public class EmbeddingService : IEmbeddingService
         var model = "text-embedding-3-small";        
          _dimension = 1536;
 
+        _logger.LogInformation("Initializing embedding service with model {Model}", model);
+        _logger.LogInformation("GitHub Token configured: {TokenKey}", !string.IsNullOrWhiteSpace(tokenKey));
+
         if (!string.IsNullOrWhiteSpace(tokenKey))
         {
             try
@@ -41,7 +44,7 @@ public class EmbeddingService : IEmbeddingService
         }
         else
         {
-            _logger.LogWarning("OpenAI API key not configured using deterministic embeddings");
+            _logger.LogWarning("GitHub Token key not configured using deterministic embeddings");
         }
     }
 
