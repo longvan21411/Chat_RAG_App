@@ -25,15 +25,18 @@ public class ImageSeeder
 
     public async Task SeedImagesIfEmptyAsync(CancellationToken ct = default)
     {
-        // Check if images collection has any points
-        var images = await _imageService.GetAllActiveImagesAsync(ct);
-        if (images.Count > 0)
+        // Ensure 'images' collection exists, create if not
+        if (_qdrant is QdrantService qdrantService)
         {
-            _logger.LogInformation("Images collection already seeded.");
-            return;
+            var exists = await qdrantService.CollectionExistsAsync("images", ct);
+            if (!exists)
+            {
+                await qdrantService.EnsureNamedVectorCollectionIfNotExistsAsync("images", ct);
+                _logger.LogInformation("Created 'images' collection in Qdrant.");
+            }
         }
 
-        _logger.LogInformation("Seeding images from TrainedImg...");
+        _logger.LogInformation("Upserting all images from TrainedImg...");
         var categories = new[]
         {
             ("cats", "Cats"),

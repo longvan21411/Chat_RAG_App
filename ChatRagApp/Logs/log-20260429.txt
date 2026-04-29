@@ -1,0 +1,112 @@
+2026-04-29 08:34:20.498 +07:00 [WRN] Could not ensure collection users
+Grpc.Core.RpcException: Status(StatusCode="Unavailable", Detail="Error connecting to subchannel.", DebugException="System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it.")
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.SocketConnectivitySubchannelTransport.TryConnectAsync(ConnectContext context, Int32 attempt)
+   --- End of inner exception stack trace ---
+   at Grpc.Net.Client.Balancer.Internal.ConnectionManager.PickAsync(PickContext context, Boolean waitForReady, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.BalancerHttpHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Internal.GrpcCall`2.RunCall(HttpRequestMessage request, Nullable`1 timeout)
+   at Qdrant.Client.QdrantClient.CollectionExistsAsync(String collectionName, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.EnsureSingleVectorCollectionAsync(String name, UInt64 size, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 35
+2026-04-29 08:34:20.571 +07:00 [WRN] Could not ensure collection chat_history
+Grpc.Core.RpcException: Status(StatusCode="Unavailable", Detail="Error connecting to subchannel.", DebugException="System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it.")
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.SocketConnectivitySubchannelTransport.TryConnectAsync(ConnectContext context, Int32 attempt)
+   --- End of inner exception stack trace ---
+   at Grpc.Net.Client.Balancer.Internal.ConnectionManager.PickAsync(PickContext context, Boolean waitForReady, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.BalancerHttpHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Internal.GrpcCall`2.RunCall(HttpRequestMessage request, Nullable`1 timeout)
+   at Qdrant.Client.QdrantClient.CollectionExistsAsync(String collectionName, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.EnsureSingleVectorCollectionAsync(String name, UInt64 size, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 35
+2026-04-29 08:34:20.580 +07:00 [WRN] Could not ensure named-vector collection images
+Grpc.Core.RpcException: Status(StatusCode="Unavailable", Detail="Error connecting to subchannel.", DebugException="System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it.")
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.SocketConnectivitySubchannelTransport.TryConnectAsync(ConnectContext context, Int32 attempt)
+   --- End of inner exception stack trace ---
+   at Grpc.Net.Client.Balancer.Internal.ConnectionManager.PickAsync(PickContext context, Boolean waitForReady, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.BalancerHttpHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Internal.GrpcCall`2.RunCall(HttpRequestMessage request, Nullable`1 timeout)
+   at Qdrant.Client.QdrantClient.CollectionExistsAsync(String collectionName, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.EnsureNamedVectorCollectionAsync(String name, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 50
+2026-04-29 08:34:20.599 +07:00 [WRN] OpenAI API key not configured using deterministic embeddings
+2026-04-29 08:34:20.626 +07:00 [WRN] SearchImagesByText failed
+Grpc.Core.RpcException: Status(StatusCode="Unavailable", Detail="Error connecting to subchannel.", DebugException="System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it.")
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.SocketConnectivitySubchannelTransport.TryConnectAsync(ConnectContext context, Int32 attempt)
+   --- End of inner exception stack trace ---
+   at Grpc.Net.Client.Balancer.Internal.ConnectionManager.PickAsync(PickContext context, Boolean waitForReady, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.BalancerHttpHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Internal.GrpcCall`2.RunCall(HttpRequestMessage request, Nullable`1 timeout)
+   at Qdrant.Client.QdrantClient.SearchAsync(String collectionName, ReadOnlyMemory`1 vector, Filter filter, SearchParams searchParams, UInt64 limit, UInt64 offset, WithPayloadSelector payloadSelector, WithVectorsSelector vectorsSelector, Nullable`1 scoreThreshold, String vectorName, ReadConsistency readConsistency, ShardKeySelector shardKeySelector, Nullable`1 sparseIndices, Nullable`1 timeout, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.SearchImagesByTextAsync(Single[] queryEmbedding, Int32 topK, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 299
+2026-04-29 08:34:20.633 +07:00 [INF] Seeding images from TrainedImg...
+2026-04-29 08:34:20.635 +07:00 [INF] Image seeding complete.
+2026-04-29 08:45:32.777 +07:00 [WRN] Could not ensure collection users
+Grpc.Core.RpcException: Status(StatusCode="Unavailable", Detail="Error connecting to subchannel.", DebugException="System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it.")
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.SocketConnectivitySubchannelTransport.TryConnectAsync(ConnectContext context, Int32 attempt)
+   --- End of inner exception stack trace ---
+   at Grpc.Net.Client.Balancer.Internal.ConnectionManager.PickAsync(PickContext context, Boolean waitForReady, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.BalancerHttpHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Internal.GrpcCall`2.RunCall(HttpRequestMessage request, Nullable`1 timeout)
+   at Qdrant.Client.QdrantClient.CollectionExistsAsync(String collectionName, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.EnsureSingleVectorCollectionAsync(String name, UInt64 size, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 35
+2026-04-29 08:45:32.821 +07:00 [WRN] Could not ensure collection chat_history
+Grpc.Core.RpcException: Status(StatusCode="Unavailable", Detail="Error connecting to subchannel.", DebugException="System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it.")
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.SocketConnectivitySubchannelTransport.TryConnectAsync(ConnectContext context, Int32 attempt)
+   --- End of inner exception stack trace ---
+   at Grpc.Net.Client.Balancer.Internal.ConnectionManager.PickAsync(PickContext context, Boolean waitForReady, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.BalancerHttpHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Internal.GrpcCall`2.RunCall(HttpRequestMessage request, Nullable`1 timeout)
+   at Qdrant.Client.QdrantClient.CollectionExistsAsync(String collectionName, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.EnsureSingleVectorCollectionAsync(String name, UInt64 size, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 35
+2026-04-29 08:45:32.828 +07:00 [WRN] Could not ensure named-vector collection images
+Grpc.Core.RpcException: Status(StatusCode="Unavailable", Detail="Error connecting to subchannel.", DebugException="System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it.")
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.SocketConnectivitySubchannelTransport.TryConnectAsync(ConnectContext context, Int32 attempt)
+   --- End of inner exception stack trace ---
+   at Grpc.Net.Client.Balancer.Internal.ConnectionManager.PickAsync(PickContext context, Boolean waitForReady, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.BalancerHttpHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Internal.GrpcCall`2.RunCall(HttpRequestMessage request, Nullable`1 timeout)
+   at Qdrant.Client.QdrantClient.CollectionExistsAsync(String collectionName, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.EnsureNamedVectorCollectionAsync(String name, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 50
+2026-04-29 08:45:32.837 +07:00 [WRN] OpenAI API key not configured using deterministic embeddings
+2026-04-29 08:45:32.852 +07:00 [WRN] SearchImagesByText failed
+Grpc.Core.RpcException: Status(StatusCode="Unavailable", Detail="Error connecting to subchannel.", DebugException="System.Net.Sockets.SocketException: No connection could be made because the target machine actively refused it.")
+ ---> System.Net.Sockets.SocketException (10061): No connection could be made because the target machine actively refused it.
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.ThrowException(SocketError error, CancellationToken cancellationToken)
+   at System.Net.Sockets.Socket.AwaitableSocketAsyncEventArgs.System.Threading.Tasks.Sources.IValueTaskSource.GetResult(Int16 token)
+   at System.Net.Sockets.Socket.<ConnectAsync>g__WaitForConnectWithCancellation|285_0(AwaitableSocketAsyncEventArgs saea, ValueTask connectTask, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.SocketConnectivitySubchannelTransport.TryConnectAsync(ConnectContext context, Int32 attempt)
+   --- End of inner exception stack trace ---
+   at Grpc.Net.Client.Balancer.Internal.ConnectionManager.PickAsync(PickContext context, Boolean waitForReady, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Balancer.Internal.BalancerHttpHandler.SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+   at Grpc.Net.Client.Internal.GrpcCall`2.RunCall(HttpRequestMessage request, Nullable`1 timeout)
+   at Qdrant.Client.QdrantClient.SearchAsync(String collectionName, ReadOnlyMemory`1 vector, Filter filter, SearchParams searchParams, UInt64 limit, UInt64 offset, WithPayloadSelector payloadSelector, WithVectorsSelector vectorsSelector, Nullable`1 scoreThreshold, String vectorName, ReadConsistency readConsistency, ShardKeySelector shardKeySelector, Nullable`1 sparseIndices, Nullable`1 timeout, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.SearchImagesByTextAsync(Single[] queryEmbedding, Int32 topK, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 299
+2026-04-29 08:45:32.859 +07:00 [INF] Seeding images from TrainedImg...
+2026-04-29 08:45:32.860 +07:00 [INF] Image seeding complete.
+2026-04-29 08:55:09.581 +07:00 [WRN] Agent general-assistant is missing token or endpoint configuration. LLM features will be disabled.
+2026-04-29 08:55:09.585 +07:00 [WRN] Agent image-analyst is missing token or endpoint configuration. LLM features will be disabled.

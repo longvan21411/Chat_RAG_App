@@ -7,6 +7,17 @@ namespace ChatRagApp.Services;
 
 public class QdrantService : IQdrantService
 {
+    // Expose collection existence check for seeder
+    public async Task<bool> CollectionExistsAsync(string name, CancellationToken ct = default)
+    {
+        return await _client.CollectionExistsAsync(name, ct);
+    }
+
+    // Expose EnsureNamedVectorCollectionAsync for seeder
+    public async Task EnsureNamedVectorCollectionIfNotExistsAsync(string name, CancellationToken ct = default)
+    {
+        await EnsureNamedVectorCollectionAsync(name, ct);
+    }
     private const string UsersCollection = "users";
     private const string ChatHistoryCollection = "chat_history";
     private const string ImagesCollection = "images";

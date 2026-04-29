@@ -85,6 +85,18 @@ Current responsibilities:
 - perform semantic image search
 - aggregate daily report metrics from stored chat and image data
 - retrieve all chat messages for a session
+- expose methods to check for collection existence and create named-vector collections as needed
+Implements image seeding logic for the 'images' collection in Qdrant.
+
+Current responsibilities:
+
+- On application startup, ensures the 'images' collection exists in Qdrant (creates it if missing)
+- Always upserts all images from the TrainedImg directory (cats, dogs, wild_animals) into the 'images' collection, regardless of whether the collection is empty
+- Uses embedding service to generate text and image embeddings for each image
+- Logs seeding progress and completion
+
+Behavioral change:
+- The seeder no longer skips seeding if the collection is non-empty; it always upserts all images, ensuring the Qdrant collection is up to date with TrainedImg
 
 ### `IImageService.cs`
 

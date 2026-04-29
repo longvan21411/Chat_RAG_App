@@ -223,7 +223,8 @@ public record ImageMetadata(
 
 ### 4.5 Image Collection Seeding (TrainedImg)
 
-On application startup, the app will automatically seed the `images` collection in Qdrant from the `TrainedImg` folder if the collection is empty. This is handled by the `ImageSeeder` class.
+
+On application startup, the app will automatically seed the `images` collection in Qdrant from the `TrainedImg` folder. This is handled by the `ImageSeeder` class.
 
 - The `TrainedImg` folder must contain subfolders: `cats`, `dogs`, and `wild_animals`.
 - Images in each subfolder are inserted with the following categories:
@@ -234,8 +235,7 @@ On application startup, the app will automatically seed the `images` collection 
   - Numeric, incrementing `Id`
   - Payload: file_name, title, category, description, created_date, is_active
   - Vectors: text_description (embedding), image_embedding (embedding)
-- Seeding only occurs if the `images` collection is empty.
-- This process runs automatically on app startup.
+- On every startup, the seeder ensures the `images` collection exists in Qdrant (creates it if missing) and always upserts all images from TrainedImg, regardless of whether the collection is empty or not. This guarantees the Qdrant collection is always up to date with the contents of TrainedImg.
 
 ---
 
