@@ -1984,3 +1984,19 @@ Grpc.Core.RpcException: Status(StatusCode="NotFound", Detail="Not found: Collect
 Grpc.Core.RpcException: Status(StatusCode="NotFound", Detail="Not found: Collection `images` doesn't exist!")
    at Qdrant.Client.QdrantClient.ScrollAsync(String collectionName, Filter filter, UInt32 limit, PointId offset, WithPayloadSelector payloadSelector, WithVectorsSelector vectorsSelector, ReadConsistency readConsistency, ShardKeySelector shardKeySelector, OrderBy orderBy, CancellationToken cancellationToken)
    at ChatRagApp.Services.QdrantService.GetDailyReportAsync(DateTime date, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 347
+2026-04-30 08:53:38.201 +07:00 [WRN] GetDailyReport failed
+Grpc.Core.RpcException: Status(StatusCode="NotFound", Detail="Not found: Collection `images` doesn't exist!")
+   at Qdrant.Client.QdrantClient.ScrollAsync(String collectionName, Filter filter, UInt32 limit, PointId offset, WithPayloadSelector payloadSelector, WithVectorsSelector vectorsSelector, ReadConsistency readConsistency, ShardKeySelector shardKeySelector, OrderBy orderBy, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.GetDailyReportAsync(DateTime date, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 347
+2026-04-30 08:54:38.205 +07:00 [WRN] GetDailyReport failed
+Grpc.Core.RpcException: Status(StatusCode="NotFound", Detail="Not found: Collection `images` doesn't exist!")
+   at Qdrant.Client.QdrantClient.ScrollAsync(String collectionName, Filter filter, UInt32 limit, PointId offset, WithPayloadSelector payloadSelector, WithVectorsSelector vectorsSelector, ReadConsistency readConsistency, ShardKeySelector shardKeySelector, OrderBy orderBy, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.GetDailyReportAsync(DateTime date, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 347
+2026-04-30 08:55:38.202 +07:00 [WRN] GetDailyReport failed
+Grpc.Core.RpcException: Status(StatusCode="NotFound", Detail="Not found: Collection `images` doesn't exist!")
+   at Qdrant.Client.QdrantClient.ScrollAsync(String collectionName, Filter filter, UInt32 limit, PointId offset, WithPayloadSelector payloadSelector, WithVectorsSelector vectorsSelector, ReadConsistency readConsistency, ShardKeySelector shardKeySelector, OrderBy orderBy, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.GetDailyReportAsync(DateTime date, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 347
+2026-04-30 08:56:38.207 +07:00 [WRN] GetDailyReport failed
+Grpc.Core.RpcException: Status(StatusCode="NotFound", Detail="Not found: Collection `images` doesn't exist!")
+   at Qdrant.Client.QdrantClient.ScrollAsync(String collectionName, Filter filter, UInt32 limit, PointId offset, WithPayloadSelector payloadSelector, WithVectorsSelector vectorsSelector, ReadConsistency readConsistency, ShardKeySelector shardKeySelector, OrderBy orderBy, CancellationToken cancellationToken)
+   at ChatRagApp.Services.QdrantService.GetDailyReportAsync(DateTime date, CancellationToken ct) in D:\VS_Code\RAG\Chat_RAG_App\ChatRagApp\Services\QdrantService.cs:line 347

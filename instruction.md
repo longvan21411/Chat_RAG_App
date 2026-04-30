@@ -442,7 +442,7 @@ Chat_RAG_App/
 │   ├── AccountController.cs
 │   ├── ReportApiController.cs
 ├── Logs/
-│   └── log-20260428.txt
+│   └── log-20260428.log
 ├── Mcp/
 │   └── McpTools.cs
 ├── Models/
