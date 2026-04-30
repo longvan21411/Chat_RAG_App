@@ -25,6 +25,7 @@ Current responsibilities:
 
 - save a single chat message
 - load recent messages for a given user and agent
+- load all chat messages for a session through the 
 
 ### `ChatHistoryService.cs`
 
@@ -35,6 +36,8 @@ Current responsibilities:
 - generate an embedding for each message through `IEmbeddingService`
 - persist chat messages through `IQdrantService`
 - retrieve recent chat history through `IQdrantService`
+- retrieve all chat messages for a session through `IQdrantService`
+- always fetching 5 latest chat messages history sessions through `IQdrantService`
 
 ### `IEmbeddingService.cs`
 
@@ -67,6 +70,7 @@ Current responsibilities:
 - store and query chat messages
 - store and search image points
 - build daily reporting data
+- retrieve all chat messages for a session
 
 ### `QdrantService.cs`
 
@@ -80,6 +84,20 @@ Current responsibilities:
 - upsert image points with named vectors
 - perform semantic image search
 - aggregate daily report metrics from stored chat and image data
+- retrieve all chat messages for a session
+- expose methods to check for collection existence and create named-vector collections as needed
+Implements image seeding logic for the 'images' collection in Qdrant.
+
+Current responsibilities:
+
+- On application startup, ensures the 'images' collection exists in Qdrant (creates it if missing)
+- Always upserts all images from every subfolder in the TrainedImg directory into the 'images' collection, regardless of whether the collection is empty
+- Uses each subfolder name as the image category
+- Uses embedding service to generate text and image embeddings for each image
+- Logs seeding progress and completion
+
+Behavioral change:
+- The seeder no longer skips seeding if the collection is non-empty; it always upserts all images, ensuring the Qdrant collection is up to date with all folders and images in TrainedImg
 
 ### `IImageService.cs`
 
@@ -193,3 +211,17 @@ When adding a new service:
 - `ChatRagApp/Controllers/AccountController.cs` — consumer of user-related Qdrant service operations
 - `ChatRagApp/Models` — shared data contracts used by the service layer
 - `ChatRagApp/appsettings.json` — service configuration source
+
+### Chat History by Session
+
+#### `IChatHistoryService.cs`
+- Now includes `GetHistoryBySessionIdAsync(string sessionId, CancellationToken ct = default)` to load all chat messages for a session.
+
+#### `ChatHistoryService.cs`
+- Implements `GetHistoryBySessionIdAsync` by calling the new Qdrant service method and sorting by timestamp.
+
+#### `IQdrantService.cs`
+- Now includes `GetAllChatMessagesBySessionIdAsync(string sessionId, CancellationToken ct = default)` for session-based retrieval.
+
+#### `QdrantService.cs`
+- Stub implementation for `GetAllChatMessagesBySessionIdAsync` (replace with actual Qdrant query logic as needed).

@@ -5,6 +5,17 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
+    <script>
+        try {
+            const storedTheme = window.localStorage.getItem('chatrag-theme');
+            const theme = storedTheme === 'light' || storedTheme === 'dark'
+                ? storedTheme
+                : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', theme);
+        } catch {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
     <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="ChatRagApp.styles.css" />

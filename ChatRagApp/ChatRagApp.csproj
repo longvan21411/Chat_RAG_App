@@ -8,11 +8,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.34.1" />
+    <PackageReference Include="Markdig" Version="0.37.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.19" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.74.0" />
     <PackageReference Include="ModelContextProtocol.AspNetCore" Version="1.2.0" />
+    <PackageReference Include="OpenAI" Version="2.9.1" />
     <PackageReference Include="Qdrant.Client" Version="1.17.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GithubConfiguration\GithubConfiguration.csproj" />
+  </ItemGroup>
+
+    <!-- Copy the root-level TrainedImg folder (with all subfolders) to the output directory as TrainedImg -->
+    <ItemGroup>
+      <Content Include="..\TrainedImg\**">
+        <Link>TrainedImg\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
 
 </Project>

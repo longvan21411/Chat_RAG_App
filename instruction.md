@@ -221,6 +221,22 @@ public record ImageMetadata(
     bool IsActive = true);
 ```
 
+### 4.5 Image Collection Seeding (TrainedImg)
+
+
+On application startup, the app will automatically seed the `images` collection in Qdrant from the `TrainedImg` folder. This is handled by the `ImageSeeder` class.
+
+- The `TrainedImg` folder must contain subfolders: `cats`, `dogs`, and `wild_animals`.
+- Images in each subfolder are inserted with the following categories:
+  - `cats` → `Cats`
+  - `dogs` → `Dogs`
+  - `wild_animals` → `Animals`
+- Each image is inserted as a point with:
+  - Numeric, incrementing `Id`
+  - Payload: file_name, title, category, description, created_date, is_active
+  - Vectors: text_description (embedding), image_embedding (embedding)
+- On every startup, the seeder ensures the `images` collection exists in Qdrant (creates it if missing) and always upserts all images from TrainedImg, regardless of whether the collection is empty or not. This guarantees the Qdrant collection is always up to date with the contents of TrainedImg.
+
 ---
 
 ## 5. Chat History
@@ -373,43 +389,102 @@ The report agent queries Qdrant `chat_history` and `images` collections to produ
 ## 9. Project Structure
 
 ```
-ChatRagApp/
-├── Agents/
-│   ├── IAgent.cs
-│   ├── BaseAgent.cs
-│   ├── GeneralAssistantAgent.cs
-│   └── ImageAnalystAgent.cs
+Chat_RAG_App/
+├── ChatRagApp.sln
+├── instruction.md
+├── README.md
+├── requirements/
+├── ChatRagApp/
+│   ├── appsettings.Development.json
+│   ├── appsettings.json
+│   ├── ChatRagApp.csproj
+│   ├── Program.cs
+│   ├── serilog.json
+│   ├── Agents/
+│   │   ├── AgentConfig.cs
+│   │   ├── AgentFactory.cs
+│   │   ├── BaseAgent.cs
+│   │   ├── GeneralAssistantAgent.cs
+│   │   ├── IAgent.cs
+│   │   ├── ImageAnalystAgent.cs
+│   │   └── instruction.md
+│   ├── bin/
+│   ├── Components/
+│   │   ├── _Imports.razor
+│   │   ├── App.razor
+│   │   ├── RedirectToLogin.razor
+│   │   ├── Routes.razor
+│   │   ├── Layout/
+│   │   │   ├── instruction.md
+│   │   │   ├── MainLayout.razor
+│   │   │   ├── MainLayout.razor.css
+│   │   │   ├── NavMenu.razor
+│   │   │   ├── NavMenu.razor.css
+│   │   │   ├── ReconnectModal.razor
+│   │   │   ├── ReconnectModal.razor.css
+│   │   │   └── ReconnectModal.razor.js
+│   │   ├── Pages/
+│   │   │   ├── Chat.razor
+│   │   │   ├── Chat.razor.css
+│   │   │   ├── ChatHistory.razor
+│   │   │   ├── Counter.razor
+│   │   │   ├── Dashboard.razor
+│   │   │   ├── Error.razor
+│   │   │   ├── Header.razor
+│   │   │   ├── Home.razor
+│   │   │   ├── Images.razor
+│   │   │   ├── Images.razor.css
+│   │   │   ├── instruction.md
+│   │   │   ├── NotFound.razor
+│   │   │   ├── Weather.razor
+│   │   │   └── Account/
 ├── Controllers/
 │   ├── AccountController.cs
-│   ├── ChatController.cs
-│   ├── ImageController.cs
-│   └── ReportController.cs
+│   ├── ReportApiController.cs
+├── Logs/
+│   └── log-20260428.log
+├── Mcp/
+│   └── McpTools.cs
 ├── Models/
+│   ├── AgentResponse.cs
 │   ├── AppUser.cs
 │   ├── ChatMessage.cs
-│   ├── ImageMetadata.cs
+│   ├── DailyReport.cs
 │   ├── ImagePoint.cs
-│   └── TokenUsage.cs
+│   ├── ImageSearchResult.cs
+│   ├── ImageUploadResult.cs
+│   ├── TokenUsage.cs
+├── obj/
+├── Properties/
+│   └── launchSettings.json
 ├── Services/
-│   ├── IImageService.cs
-│   ├── ImageService.cs
-│   ├── IChatHistoryService.cs
 │   ├── ChatHistoryService.cs
+│   ├── EmbeddingService.cs
+│   ├── IChatHistoryService.cs
+│   ├── IEmbeddingService.cs
+│   ├── IImageService.cs
+│   ├── ImageSeeder.cs
+│   ├── ImageService.cs
+│   ├── instruction.md
 │   ├── IQdrantService.cs
-│   └── QdrantService.cs
-├── Mcp/
-│   ├── ImageSearchTool.cs
-│   ├── ChatHistoryTool.cs
-│   └── ReportTool.cs
-├── Pages/ (or Views/)
-│   ├── Chat/
-│   ├── Images/
-│   └── Dashboard/
+│   ├── QdrantService.cs
 ├── wwwroot/
-│   ├── uploads/images/
-│   └── js/idle-timer.js
-├── appsettings.json
-└── Program.cs
+│   ├── app.css
+│   ├── js/
+│   │   ├── app.js
+│   │   └── reconnect-modal.js
+│   ├── lib/
+│   │   └── bootstrap/
+│   └── upload/
+├── GithubConfiguration/
+│   ├── GithubConfiguration.csproj
+│   ├── GithubConfigurationInfo.cs
+│   ├── bin/
+│   └── obj/
+├── TrainedImg/
+│   ├── cats/
+│   ├── dogs/
+│   └── wild_animals/
 ```
 
 ---

@@ -1,0 +1,133 @@
+@using ChatRagApp.Models
+@inject IImageService ImageService
+
+<DialogModal @bind-Visible="Visible">
+    @if (Image == null)
+    {
+        <div class="alert alert-danger">Image not found.</div>
+        <button class="btn btn-secondary" @onclick="Close">Close</button>
+    }
+    else
+    {
+        <div class="container py-2">
+            <div class="card mb-2">
+                <div class="row g-0">
+                    <div class="col-md-5 d-flex align-items-center justify-content-center" style="background:#f8f9fa;">
+                        <img src="@($"/TrainedImg/{Image.Category}/{Image.FileName}")" alt="@Image.Title" style="max-width:100%; max-height:350px; object-fit:contain;" />
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body">
+                            @if (IsEditing)
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input class="form-control" @bind="EditTitle" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Category</label>
+                                    <input class="form-control" @bind="EditCategory" />
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" @bind="EditDescription"></textarea>
+                                </div>
+                                @if (!string.IsNullOrEmpty(ErrorMessage))
+                                {
+                                    <div class="alert alert-danger">@ErrorMessage</div>
+                                }
+                                <button class="btn btn-primary me-2" @onclick="SaveEdit" disabled="@IsSaving">Save</button>
+                                <button class="btn btn-secondary" @onclick="CancelEdit" disabled="@IsSaving">Cancel</button>
+                            }
+                            else
+                            {
+                                <h3>@Image.Title</h3>
+                                <p><strong>Category:</strong> @Image.Category</p>
+                                <p><strong>Description:</strong> @Image.Description</p>
+                                <p><strong>File Name:</strong> @Image.FileName</p>
+                                <p><strong>Created:</strong> @Image.CreatedDate.ToString("g")</p>
+                                <button class="btn btn-warning" @onclick="StartEdit">Edit</button>
+                                <button class="btn btn-secondary ms-2" @onclick="Close">Close</button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</DialogModal>
+
+@code {
+    [Parameter] public Guid? ImageId { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+
+    private ImagePoint? Image { get; set; }
+    private bool IsEditing { get; set; }
+    private string EditTitle = string.Empty;
+    private string EditCategory = string.Empty;
+    private string EditDescription = string.Empty;
+    private string ErrorMessage = string.Empty;
+    private bool IsSaving = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ImageId.HasValue && Visible)
+        {
+            Image = await ImageService.GetImagePointByIdAsync(ImageId.Value);
+            if (Image != null)
+            {
+                EditTitle = Image.Title;
+                EditCategory = Image.Category;
+                EditDescription = Image.Description;
+            }
+        }
+    }
+
+    private void StartEdit()
+    {
+        IsEditing = true;
+        ErrorMessage = string.Empty;
+    }
+
+    private void CancelEdit()
+    {
+        if (Image != null)
+        {
+            EditTitle = Image.Title;
+            EditCategory = Image.Category;
+            EditDescription = Image.Description;
+        }
+        IsEditing = false;
+        ErrorMessage = string.Empty;
+    }
+
+    private async Task SaveEdit()
+    {
+        if (Image == null) return;
+        IsSaving = true;
+        ErrorMessage = string.Empty;
+        try
+        {
+            Image.Title = EditTitle;
+            Image.Category = EditCategory;
+            Image.Description = EditDescription;
+            // await ImageService.UpdateImageAsync(Image); // Uncomment if implemented
+            IsEditing = false;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+        finally
+        {
+            IsSaving = false;
+        }
+    }
+
+    private async Task Close()
+    {
+        await VisibleChanged.InvokeAsync(false);
+        IsEditing = false;
+        ErrorMessage = string.Empty;
+    }
+}

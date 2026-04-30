@@ -1,26 +1,21 @@
-﻿@inherits LayoutComponentBase
+﻿@using ChatRagApp.Components.Pages
+@inherits LayoutComponentBase
+@inject IJSRuntime JS
 @inject NavigationManager Navigation
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4 d-flex justify-content-between align-items-center">
-            <span class="text-muted small">Chat RAG App</span>
-            <AuthorizeView>
-                <Authorized>
-                    <span class="me-3 text-light small">@context.User.Identity?.Name</span>
-                    <a href="/account/logout" class="btn btn-sm btn-outline-light">Logout</a>
-                </Authorized>
-            </AuthorizeView>
+<div class="page-shell @(IsDarkMode ? "theme-dark" : "theme-light")">
+    <div class="page">
+        <div class="sidebar">
+            <NavMenu IsDarkMode="IsDarkMode" OnToggleTheme="ToggleThemeAsync" />
         </div>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+        <main name="main-content">
+            <Header IsDarkMode="IsDarkMode" />
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </div>
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
@@ -28,4 +23,37 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private const string DarkTheme = "dark";
+    private const string LightTheme = "light";
+
+    private bool IsDarkMode { get; set; } = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        IsDarkMode = await JS.InvokeAsync<bool>("themeManager.initialize");
+        StateHasChanged();
+
+        if (Navigation.Uri.Contains("/chat"))
+        {
+            await JS.InvokeVoidAsync("eval", "document.querySelector('main[name=\\'main-content\\']').classList.add('main-content-disable-scrollbar')");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("eval", "document.querySelector('main[name=\\'main-content\\']').classList.remove('main-content-disable-scrollbar')");
+        }
+    }
+
+    private async Task ToggleThemeAsync()
+    {
+        IsDarkMode = !IsDarkMode;
+        await JS.InvokeVoidAsync("themeManager.applyTheme", IsDarkMode ? DarkTheme : LightTheme);
+    }
+}
 

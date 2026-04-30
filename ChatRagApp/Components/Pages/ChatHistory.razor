@@ -1,0 +1,34 @@
+@page "/chat-history"
+@using ChatRagApp.Services
+@inject IChatHistoryService ChatHistoryService
+@inject NavigationManager Navigation
+@code {
+    private List<ChatMessage>? History;
+    protected override async Task OnInitializedAsync()
+    {
+        History = await ChatHistoryService.GetAllHistoryAsync();
+    }
+}
+
+<div class="chat-history-page">
+    <h5>All Chat History</h5>
+    @if (History == null)
+    {
+        <p>Loading...</p>
+    }
+    else if (!History.Any())
+    {
+        <p>No chat history found.</p>
+    }
+    else
+    {
+        <ul class="chat-history-list">
+            @foreach (var msg in History)
+            {
+                <li>
+                    <b>@msg.Role:</b> @msg.Content
+                </li>
+            }
+        </ul>
+    }
+</div>

@@ -7,6 +7,17 @@ namespace ChatRagApp.Services;
 
 public class QdrantService : IQdrantService
 {
+    // Expose collection existence check for seeder
+    public async Task<bool> CollectionExistsAsync(string name, CancellationToken ct = default)
+    {
+        return await _client.CollectionExistsAsync(name, ct);
+    }
+
+    // Expose EnsureNamedVectorCollectionAsync for seeder
+    public async Task EnsureNamedVectorCollectionIfNotExistsAsync(string name, CancellationToken ct = default)
+    {
+        await EnsureNamedVectorCollectionAsync(name, ct);
+    }
     private const string UsersCollection = "users";
     private const string ChatHistoryCollection = "chat_history";
     private const string ImagesCollection = "images";
@@ -193,6 +204,73 @@ public class QdrantService : IQdrantService
             return messages;
         }
         catch (Exception ex) { _logger.LogWarning(ex, "GetRecentChatMessages failed"); return []; }
+    }
+
+    public async Task<List<ChatMessage>> GetAllChatMessagesAsync(CancellationToken ct = default)
+    {
+        try
+        {
+            var response = await _client.ScrollAsync(ChatHistoryCollection, filter: null, limit: 1000, cancellationToken: ct);
+            var messages = response.Result.Select(p => new ChatMessage
+            {
+                Id = Guid.TryParse(p.Id.Uuid, out var g) ? g : Guid.Empty,
+                SessionId = GetString(p.Payload, "session_id"),
+                UserId = GetString(p.Payload, "user_id"),
+                Role = GetString(p.Payload, "role"),
+                Content = GetString(p.Payload, "content"),
+                AgentId = GetString(p.Payload, "agent_id"),
+                Timestamp = DateTime.TryParse(GetString(p.Payload, "timestamp"), out var ts) ? ts : DateTime.UtcNow,
+                TokenUsage = new Models.TokenUsage(
+                    (int)GetLong(p.Payload, "input_tokens"),
+                    (int)GetLong(p.Payload, "output_tokens"),
+                    (int)GetLong(p.Payload, "cached_tokens"))
+            }).OrderBy(m => m.Timestamp).ToList();
+            return messages;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "GetAllChatMessagesAsync failed");
+            return new List<ChatMessage>();
+        }
+    }
+
+    public async Task<List<ChatMessage>> GetAllChatMessagesBySessionIdAsync(string sessionId, CancellationToken ct = default)
+    {
+        try
+        {
+            var filter = new Filter();
+            filter.Must.Add(new Condition
+            {
+                Field = new FieldCondition { Key = "session_id", Match = new Match { Text = sessionId } }
+            });
+            var orderBy = new OrderBy { Key = "timestamp_unix", Direction = Direction.Asc };
+            var response = await _client.ScrollAsync(ChatHistoryCollection, filter,
+                limit: 1000, // adjust as needed for your expected history size
+                orderBy: orderBy,
+                cancellationToken: ct);
+
+            var messages = response.Result.Select(p => new ChatMessage
+            {
+                Id = Guid.TryParse(p.Id.Uuid, out var g) ? g : Guid.Empty,
+                SessionId = GetString(p.Payload, "session_id"),
+                UserId = GetString(p.Payload, "user_id"),
+                Role = GetString(p.Payload, "role"),
+                Content = GetString(p.Payload, "content"),
+                AgentId = GetString(p.Payload, "agent_id"),
+                Timestamp = DateTime.TryParse(GetString(p.Payload, "timestamp"), out var ts) ? ts : DateTime.UtcNow,
+                TokenUsage = new Models.TokenUsage(
+                    (int)GetLong(p.Payload, "input_tokens"),
+                    (int)GetLong(p.Payload, "output_tokens"),
+                    (int)GetLong(p.Payload, "cached_tokens"))
+            }).ToList();
+
+            return messages;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "GetAllChatMessagesBySessionIdAsync failed for session {SessionId}", sessionId);
+            return new List<ChatMessage>();
+        }
     }
 
     public async Task UpsertImageAsync(ImagePoint image, float[] textEmbedding, float[] imageEmbedding, CancellationToken ct = default)

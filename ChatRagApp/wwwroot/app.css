@@ -1,9 +1,72 @@
+html {
+    --app-body-background: #09111f;
+    --app-body-foreground: #e6edf7;
+    --app-link-color: #8cb9ff;
+    --app-card-background: rgba(10, 20, 38, 0.88);
+    --app-card-foreground: #e6edf7;
+    --app-card-border: rgba(158, 179, 214, 0.14);
+    --app-muted-color: #9db0cb;
+    --app-input-background: rgba(9, 17, 31, 0.88);
+    --app-input-border: rgba(158, 179, 214, 0.18);
+    --app-input-foreground: #e6edf7;
+    --nav-brand-color: #f7fbff;
+    --nav-link-color: #d7d7d7;
+    --nav-link-active-background: rgba(255,255,255,0.37);
+    --nav-link-active-color: #ffffff;
+    --nav-link-hover-background: rgba(255,255,255,0.1);
+    --nav-link-hover-color: #ffffff;
+    --nav-panel-border: rgba(255, 255, 255, 0.12);
+    --nav-card-background: rgba(255, 255, 255, 0.1);
+    --nav-card-border: rgba(255, 255, 255, 0.08);
+    --nav-card-hover-background: rgba(255, 255, 255, 0.18);
+    --nav-card-text: #f2f6ff;
+    --nav-card-hover-text: #ffffff;
+    --nav-avatar-background: rgba(255, 255, 255, 0.16);
+    --nav-subtitle-color: rgba(255, 255, 255, 0.75);
+    --nav-toggle-background: rgba(255, 255, 255, 0.08);
+    --nav-toggle-pill-background: rgba(255, 255, 255, 0.14);
+    color-scheme: dark;
+}
+
+html[data-theme='light'] {
+    --app-body-background: #eef3fb;
+    --app-body-foreground: #132238;
+    --app-link-color: #0c67ae;
+    --app-card-background: rgba(255, 255, 255, 0.92);
+    --app-card-foreground: #132238;
+    --app-card-border: rgba(66, 87, 122, 0.12);
+    --app-muted-color: #61738f;
+    --app-input-background: rgba(255, 255, 255, 0.95);
+    --app-input-border: rgba(66, 87, 122, 0.18);
+    --app-input-foreground: #132238;
+    --nav-brand-color: #143559;
+    --nav-link-color: #284564;
+    --nav-link-active-background: rgba(20, 53, 89, 0.14);
+    --nav-link-active-color: #102744;
+    --nav-link-hover-background: rgba(20, 53, 89, 0.08);
+    --nav-link-hover-color: #102744;
+    --nav-panel-border: rgba(20, 53, 89, 0.14);
+    --nav-card-background: rgba(255, 255, 255, 0.72);
+    --nav-card-border: rgba(20, 53, 89, 0.1);
+    --nav-card-hover-background: rgba(255, 255, 255, 0.9);
+    --nav-card-text: #132238;
+    --nav-card-hover-text: #132238;
+    --nav-avatar-background: rgba(20, 53, 89, 0.08);
+    --nav-subtitle-color: #5e718f;
+    --nav-toggle-background: rgba(20, 53, 89, 0.06);
+    --nav-toggle-pill-background: rgba(20, 53, 89, 0.12);
+    color-scheme: light;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: var(--app-body-background);
+    color: var(--app-body-foreground);
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 a, .btn-link {
-    color: #006bb7;
+    color: var(--app-link-color);
 }
 
 .btn-primary {
@@ -18,6 +81,29 @@ a, .btn-link {
 
 .content {
     padding-top: 1.1rem;
+}
+
+.card {
+    background: var(--app-card-background);
+    color: var(--app-card-foreground);
+    border-color: var(--app-card-border);
+}
+
+.text-muted {
+    color: var(--app-muted-color) !important;
+}
+
+.form-control,
+.form-select,
+.form-control:focus,
+.form-select:focus {
+    background: var(--app-input-background);
+    border-color: var(--app-input-border);
+    color: var(--app-input-foreground);
+}
+
+.form-control::placeholder {
+    color: var(--app-muted-color);
 }
 
 h1:focus {

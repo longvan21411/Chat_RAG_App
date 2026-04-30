@@ -10,8 +10,21 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext();
+});
+
+// Add serilog.json config
+builder.Configuration.AddJsonFile("serilog.json", optional: true, reloadOnChange: true);
 var config = builder.Configuration;
 var googleClientId = config["Google:ClientId"];
 var googleClientSecret = config["Google:ClientSecret"];
@@ -77,18 +90,28 @@ builder.Services.AddSingleton(_ =>
 
 // ── Services ────────────────────────────────────────────────────────────────
 builder.Services.AddSingleton<IEmbeddingService>(sp =>
-{
-    var apiKey = config["OpenAI:ApiKey"] ?? string.Empty;
-    var model = config["OpenAI:EmbeddingModel"] ?? "text-embedding-3-small";
-    var dim = int.TryParse(config["OpenAI:EmbeddingDimension"], out var d) ? d : 1536;
+{    
     var logger = sp.GetRequiredService<ILogger<EmbeddingService>>();
-    return new EmbeddingService(apiKey, model, dim, logger);
+    return new EmbeddingService(logger);
 });
+
 
 builder.Services.AddScoped<IQdrantService, QdrantService>();
 builder.Services.AddScoped<IChatHistoryService, ChatHistoryService>();
 builder.Services.AddScoped<IImageService, ImageService>();
 builder.Services.AddScoped<AgentFactory>();
+
+// Register ImageSeeder as singleton
+builder.Services.AddScoped<ImageSeeder>(sp =>
+{
+    var qdrant = sp.GetRequiredService<IQdrantService>();
+    var embedding = sp.GetRequiredService<IEmbeddingService>();
+    var imageService = sp.GetRequiredService<IImageService>();
+    var logger = sp.GetRequiredService<ILogger<ImageSeeder>>();
+    var trainedImgPath = Path.Combine(AppContext.BaseDirectory, "TrainedImg");
+    
+    return new ImageSeeder(qdrant, embedding, imageService, logger, trainedImgPath);
+});
 
 // ── MCP Server ──────────────────────────────────────────────────────────────
 builder.Services.AddMcpServer()
@@ -103,7 +126,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// ── Initialize Qdrant collections on startup ─────────────────────────────
+// ── Initialize Qdrant collections and seed images on startup ─────────────
 _ = Task.Run(async () =>
 {
     await Task.Delay(2000); // wait for Qdrant to be ready
@@ -112,10 +135,14 @@ _ = Task.Run(async () =>
         using var scope = app.Services.CreateScope();
         var qdrant = scope.ServiceProvider.GetRequiredService<IQdrantService>();
         await qdrant.InitializeCollectionsAsync();
+
+        // Seed images if needed
+        var seeder = scope.ServiceProvider.GetRequiredService<ImageSeeder>();
+        await seeder.SeedImagesIfEmptyAsync();
     }
     catch (Exception ex)
     {
-        app.Logger.LogWarning(ex, "Qdrant initialization failed — ensure Qdrant is running on localhost:6334");
+        app.Logger.LogWarning(ex, "Qdrant initialization or image seeding failed");
     }
 });
 
@@ -134,6 +161,13 @@ if (app.Configuration["ASPNETCORE_URLS"]?.Contains("https://", StringComparison.
 }
 
 app.UseStaticFiles();
+// Serve TrainedImg as static files
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        Path.Combine(app.Environment.ContentRootPath, "..", "TrainedImg")),
+    RequestPath = "/TrainedImg"
+});
 app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();

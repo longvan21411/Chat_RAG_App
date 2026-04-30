@@ -5,12 +5,12 @@
 
 <PageTitle>Images — Chat RAG App</PageTitle>
 
-<div class="container py-4">
+<div class="images-page container py-4">
     <h1 class="mb-4">🖼️ Image Management</h1>
 
     <!-- Upload Section -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header images-section-header images-section-header-upload">
             <strong>Upload Images</strong>
         </div>
         <div class="card-body">
@@ -75,7 +75,7 @@
 
     <!-- Search Section -->
     <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header bg-secondary text-white">
+        <div class="card-header images-section-header images-section-header-search">
             <strong>Search Images</strong>
         </div>
         <div class="card-body">
@@ -106,25 +106,35 @@
                 <div class="col-md-4 col-lg-3">
                     <div class="card border-0 shadow-sm h-100">
                         <div class="card-body">
-                            <div class="bg-light rounded d-flex align-items-center justify-content-center mb-3"
-                                 style="height:120px; font-size:2rem;">🖼️</div>
-                            <h6 class="card-title text-truncate">@result.Title</h6>
-                            <p class="card-text text-muted small text-truncate">@result.Description</p>
-                            <div class="d-flex justify-content-between">
-                                <span class="badge bg-primary">@result.Category</span>
-                                <span class="badge bg-success">@result.Score.ToString("F2")</span>
+                            <div style="cursor:pointer;" @onclick="() => ShowImageDetail(result.Id)">
+                                <div class="images-result-thumbnail rounded d-flex align-items-center justify-content-center mb-3"
+                                     style="height:120px; font-size:2rem; background:#f8f9fa; overflow:hidden;">
+                                    @if (!string.IsNullOrWhiteSpace(result.FileName) && !string.IsNullOrWhiteSpace(result.Category))
+                                    {
+                                        <img src="@($"/TrainedImg/{result.Category}/{result.FileName}")" alt="@result.Title" style="max-height: 110px; max-width: 100%; object-fit: contain;" />
+                                    }
+                                    else
+                                    {
+                                        <span>🖼️</span>
+                                    }
+                                </div>
+                                <h6 class="card-title text-truncate">@result.Title</h6>
+                                <p class="card-text text-muted small text-truncate">@result.Description</p>
+                                <div class="d-flex justify-content-between">
+                                    <span class="badge bg-primary">@result.Category</span>
+                                    <span class="badge bg-success">@result.Score.ToString("F2")</span>
+                                </div>
+                                <p class="text-muted small mt-1 text-truncate">@result.FileName</p>
                             </div>
-                            <p class="text-muted small mt-1 text-truncate">@result.FileName</p>
                         </div>
                     </div>
                 </div>
             }
         </div>
     }
-    else if (HasSearched)
-    {
-        <div class="alert alert-info">No images found for "<strong>@SearchQuery</strong>".</div>
-    }
+    @* Image Detail Modal Popup (outside results grid) *@
+    <ImageDetailModal ImageId="@SelectedImageId" Visible="@ShowDetailModal" VisibleChanged="@OnDetailModalChanged" />
+    
 </div>
 
 @code {
@@ -139,6 +149,25 @@
     private bool IsSearching { get; set; }
     private List<ImageSearchResult> SearchResults { get; set; } = [];
     private bool HasSearched { get; set; }
+
+    // Modal handlers
+    private Guid? SelectedImageId;
+    private bool ShowDetailModal;
+
+    private void ShowImageDetail(Guid id)
+    {
+        SelectedImageId = id;
+        ShowDetailModal = true;
+    }
+
+    private void OnDetailModalChanged(bool visible)
+    {
+        ShowDetailModal = visible;
+        if (!visible)
+        {
+            SelectedImageId = null;
+        }
+    }
 
     private void OnFilesSelected(InputFileChangeEventArgs e)
     {

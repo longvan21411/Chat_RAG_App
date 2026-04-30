@@ -1,0 +1,32 @@
+.images-section-header {
+    color: #f8fbff;
+    border-bottom: 1px solid transparent;
+}
+
+.images-section-header-upload {
+    background: linear-gradient(135deg, #1b6ec2 0%, #1557a0 100%);
+}
+
+.images-section-header-search {
+    background: linear-gradient(135deg, #49617d 0%, #314255 100%);
+}
+
+.images-result-thumbnail {
+    background: color-mix(in srgb, var(--app-card-background) 84%, white 16%);
+    border: 1px solid var(--app-card-border);
+    color: var(--app-muted-color);
+}
+
+html[data-theme='light'] .images-result-thumbnail {
+    background: color-mix(in srgb, white 88%, #d7e3f5 12%);
+}
+
+@supports not (background: color-mix(in srgb, white 50%, black 50%)) {
+    .images-result-thumbnail {
+        background: rgba(255, 255, 255, 0.08);
+    }
+
+    html[data-theme='light'] .images-result-thumbnail {
+        background: rgba(20, 53, 89, 0.06);
+    }
+}

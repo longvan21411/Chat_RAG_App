@@ -17,11 +17,13 @@
 
 .top-row {
     min-height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0, 0, 0, 0.12);
 }
 
 .navbar-brand {
     font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--nav-brand-color, #f7fbff);
 }
 
 .bi {
@@ -60,7 +62,7 @@
     }
 
     .nav-item ::deep .nav-link {
-        color: #d7d7d7;
+        color: var(--nav-link-color, #d7d7d7);
         background: none;
         border: none;
         border-radius: 4px;
@@ -72,13 +74,13 @@
     }
 
 .nav-item ::deep a.active {
-    background-color: rgba(255,255,255,0.37);
-    color: white;
+    background-color: var(--nav-link-active-background, rgba(255,255,255,0.37));
+    color: var(--nav-link-active-color, white);
 }
 
 .nav-item ::deep .nav-link:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
+    background-color: var(--nav-link-hover-background, rgba(255,255,255,0.1));
+    color: var(--nav-link-hover-color, white);
 }
 
 .nav-scrollable {
@@ -97,7 +99,7 @@
 .user-panel {
     margin-top: auto;
     padding: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    border-top: 1px solid var(--nav-panel-border, rgba(255, 255, 255, 0.12));
 }
 
 .user-card {
@@ -106,14 +108,15 @@
     gap: 0.85rem;
     padding: 0.85rem;
     border-radius: 0.75rem;
-    color: #f2f6ff;
+    color: var(--nav-card-text, #f2f6ff);
     text-decoration: none;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--nav-card-background, rgba(255, 255, 255, 0.1));
+    border: 1px solid var(--nav-card-border, rgba(255, 255, 255, 0.08));
 }
 
 .user-card:hover {
-    color: white;
-    background: rgba(255, 255, 255, 0.18);
+    color: var(--nav-card-hover-text, white);
+    background: var(--nav-card-hover-background, rgba(255, 255, 255, 0.18));
 }
 
 .user-avatar {
@@ -124,7 +127,7 @@
     align-items: center;
     justify-content: center;
     font-weight: 700;
-    background: rgba(255, 255, 255, 0.16);
+    background: var(--nav-avatar-background, rgba(255, 255, 255, 0.16));
 }
 
 .user-meta {
@@ -145,7 +148,39 @@
 
 .user-subtitle {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--nav-subtitle-color, rgba(255, 255, 255, 0.75));
+}
+
+.theme-toggle {
+    width: 100%;
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.75rem 0.85rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--nav-card-border, rgba(255, 255, 255, 0.08));
+    background: var(--nav-toggle-background, rgba(255, 255, 255, 0.08));
+    color: var(--nav-card-text, #f2f6ff);
+    font-size: 0.85rem;
+}
+
+.theme-toggle:hover {
+    background: var(--nav-card-hover-background, rgba(255, 255, 255, 0.18));
+}
+
+.theme-toggle-label {
+    font-weight: 600;
+}
+
+.theme-toggle-value {
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: var(--nav-toggle-pill-background, rgba(255, 255, 255, 0.14));
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
 }
 
 @media (min-width: 641px) {
