@@ -108,7 +108,8 @@ builder.Services.AddScoped<ImageSeeder>(sp =>
     var embedding = sp.GetRequiredService<IEmbeddingService>();
     var imageService = sp.GetRequiredService<IImageService>();
     var logger = sp.GetRequiredService<ILogger<ImageSeeder>>();
-    var trainedImgPath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "TrainedImg");
+    var trainedImgPath = Path.Combine(AppContext.BaseDirectory, "TrainedImg");
+    
     return new ImageSeeder(qdrant, embedding, imageService, logger, trainedImgPath);
 });
 
@@ -160,6 +161,13 @@ if (app.Configuration["ASPNETCORE_URLS"]?.Contains("https://", StringComparison.
 }
 
 app.UseStaticFiles();
+// Serve TrainedImg as static files
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        Path.Combine(app.Environment.ContentRootPath, "..", "TrainedImg")),
+    RequestPath = "/TrainedImg"
+});
 app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();

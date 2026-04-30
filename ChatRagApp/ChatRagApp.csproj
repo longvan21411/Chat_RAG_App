@@ -23,4 +23,12 @@
     <ProjectReference Include="..\GithubConfiguration\GithubConfiguration.csproj" />
   </ItemGroup>
 
+    <!-- Copy the root-level TrainedImg folder (with all subfolders) to the output directory as TrainedImg -->
+    <ItemGroup>
+      <Content Include="..\TrainedImg\**">
+        <Link>TrainedImg\%(RecursiveDir)%(Filename)%(Extension)</Link>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>

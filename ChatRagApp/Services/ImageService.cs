@@ -99,6 +99,7 @@ public class ImageService : IImageService
         return await _qdrant.SearchImagesByTextAsync(queryEmbedding, topK, ct);
     }
 
+
     public async Task<List<ImagePoint>> GetAllActiveImagesAsync(CancellationToken ct = default)
     {
         // Returns images via search with a generic query
@@ -111,6 +112,12 @@ public class ImageService : IImageService
             Category = r.Category,
             Description = r.Description
         }).ToList();
+    }
+
+    public async Task<ImagePoint?> GetImagePointByIdAsync(Guid id, CancellationToken ct = default)
+    {
+        var all = await GetAllActiveImagesAsync(ct);
+        return all.FirstOrDefault(i => i.Id == id);
     }
 
     private static string SanitizePath(string input)

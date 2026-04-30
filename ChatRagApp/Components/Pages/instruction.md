@@ -44,16 +44,23 @@ Responsibilities:
 - show follow-up question suggestions
 - keep per-session state such as selected agent, message history, and accumulated tokens
 
+
 ### `Images.razor`
 
 Implements the authenticated `/images` page.
 
 Responsibilities:
 
-- collect metadata for bulk image upload
-- accept browser file input and adapt uploaded files into the image service contract
-- trigger semantic image search
-- render upload results and search results
+- Collect metadata for bulk image upload
+- Accept browser file input and adapt uploaded files into the image service contract
+- Trigger semantic image search
+- Render upload results and search results
+- Display image details in a modal popup (ImageDetailModal) when a result card is clicked
+- Allow editing of image metadata (title, category, description) in the modal
+- Provide Save, Cancel, and Back to List actions in the modal
+
+**Note:**
+- The modal popup is now the primary flow for viewing/editing image details. The standalone `ImageDetail.razor` page is still available for direct routing but is not the main user experience.
 
 ### `Dashboard.razor`
 
@@ -131,6 +138,18 @@ Responsibilities:
 - Fetch chat messages from `IChatHistoryService` using the session ID from the route
 - Render a list of messages with roles and content
 - Provide a read-only view of past conversations for review or auditing
+
+### `ImageDetail.razor`
+
+Implements the authenticated `/images/{id}` page for image detail and editing.
+
+Responsibilities:
+
+- Display detailed information for a selected image (title, category, description, file name, score, and preview)
+- Allow the user to edit image metadata (title, category, description)
+- Provide Save and Cancel actions for editing
+- Provide a Back to List button to return to the image list
+- (Note: Save action requires backend update support for persistence)
 
 ---
 

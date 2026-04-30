@@ -1,0 +1,21 @@
+<div class="modal fade @(Visible ? "show d-block" : "")" tabindex="-1" style="background:rgba(0,0,0,0.5);" @onclick="HandleBackdropClick">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+                @ChildContent
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private async Task HandleBackdropClick(MouseEventArgs e)
+    {
+        // Close modal on any backdrop click
+        await VisibleChanged.InvokeAsync(false);
+    }
+}

@@ -21,6 +21,7 @@ public class ImageSeeder
         _imageService = imageService;
         _logger = logger;
         _trainedImgPath = trainedImgPath;
+        _logger.LogInformation("ImageSeeder initialized with trained image path: {TrainedImgPath}", _trainedImgPath);
     }
 
     public async Task SeedImagesIfEmptyAsync(CancellationToken ct = default)
