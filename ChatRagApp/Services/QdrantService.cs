@@ -197,9 +197,11 @@ public class QdrantService : IQdrantService
             {
                 Field = new FieldCondition { Key = "agent_id", Match = new Match { Text = agentId } }
             });
-            var orderBy = new OrderBy { Key = "timestamp_unix", Direction = Direction.Desc };
+            // Avoid using Qdrant `order_by` (requires payload range index). Fetch
+            // a reasonable batch and sort in-memory by timestamp.
             var response = await _client.ScrollAsync(ChatHistoryCollection, filter,
-                limit: (uint)limit, orderBy: orderBy, cancellationToken: ct);
+                limit: 1000, cancellationToken: ct);
+            if (response?.Result == null) return new List<ChatMessage>();
 
             var messages = response.Result.Select(p => new ChatMessage
             {
@@ -214,8 +216,12 @@ public class QdrantService : IQdrantService
                     (int)GetLong(p.Payload, "input_tokens"),
                     (int)GetLong(p.Payload, "output_tokens"),
                     (int)GetLong(p.Payload, "cached_tokens"))
-            }).ToList();
-            messages.Reverse();
+            })
+            .OrderByDescending(m => m.Timestamp)
+            .Take(limit)
+            .Reverse()
+            .ToList();
+
             return messages;
         }
         catch (Exception ex) { _logger.LogWarning(ex, "GetRecentChatMessages failed"); return []; }
@@ -258,11 +264,12 @@ public class QdrantService : IQdrantService
             {
                 Field = new FieldCondition { Key = "session_id", Match = new Match { Text = sessionId } }
             });
-            var orderBy = new OrderBy { Key = "timestamp_unix", Direction = Direction.Asc };
+            // Avoid using Qdrant `order_by` (requires payload range index). Fetch
+            // the batch and sort in-memory by timestamp ascending.
             var response = await _client.ScrollAsync(ChatHistoryCollection, filter,
                 limit: 1000, // adjust as needed for your expected history size
-                orderBy: orderBy,
                 cancellationToken: ct);
+            if (response?.Result == null) return new List<ChatMessage>();
 
             var messages = response.Result.Select(p => new ChatMessage
             {
@@ -277,7 +284,9 @@ public class QdrantService : IQdrantService
                     (int)GetLong(p.Payload, "input_tokens"),
                     (int)GetLong(p.Payload, "output_tokens"),
                     (int)GetLong(p.Payload, "cached_tokens"))
-            }).ToList();
+            })
+            .OrderBy(m => m.Timestamp)
+            .ToList();
 
             return messages;
         }
@@ -357,18 +366,28 @@ public class QdrantService : IQdrantService
                 Field = new FieldCondition { Key = "category", Match = new Match { Text = category } }
             });
 
-            var orderBy = new OrderBy { Key = "created_date_unix", Direction = Direction.Desc };
-            var resp = await _client.ScrollAsync(ImagesCollection, filter, limit: (uint)topK, orderBy: orderBy, cancellationToken: ct);
-            return resp.Result.Select(r => new ImageSearchResult
-            {
-                Id = Guid.TryParse(r.Id.Uuid, out var g) ? g : Guid.Empty,
-                FileName = GetString(r.Payload, "file_name"),
-                Title = GetString(r.Payload, "title"),
-                Category = GetString(r.Payload, "category"),
-                Description = GetString(r.Payload, "description"),
-                Score = 0f,
-                ImageUrl = $"/uploads/images/{GetString(r.Payload, "category")}/{GetString(r.Payload, "file_name")}"
-            }).ToList();
+            // Qdrant requires a payload index to use `order_by` on range keys like
+            // `created_date_unix`. To avoid requiring payload-index creation here,
+            // read points and sort in-memory by the payload timestamp.
+            var resp = await _client.ScrollAsync(ImagesCollection, filter, limit: 1000, cancellationToken: ct);
+            if (resp?.Result == null) return new List<ImageSearchResult>();
+
+            var sorted = resp.Result
+                .Select(r => new { Point = r, Created = GetLong(r.Payload, "created_date_unix") })
+                .OrderByDescending(x => x.Created)
+                .Take(topK)
+                .Select(x => new ImageSearchResult
+                {
+                    Id = Guid.TryParse(x.Point.Id.Uuid, out var g) ? g : Guid.Empty,
+                    FileName = GetString(x.Point.Payload, "file_name"),
+                    Title = GetString(x.Point.Payload, "title"),
+                    Category = GetString(x.Point.Payload, "category"),
+                    Description = GetString(x.Point.Payload, "description"),
+                    Score = 0f,
+                    ImageUrl = $"/uploads/images/{GetString(x.Point.Payload, "category")}/{GetString(x.Point.Payload, "file_name")}"
+                }).ToList();
+
+            return sorted;
         }
         catch (Exception ex)
         {

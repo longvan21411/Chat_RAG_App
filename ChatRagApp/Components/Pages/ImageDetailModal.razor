@@ -1,5 +1,6 @@
 @using ChatRagApp.Models
 @inject IImageService ImageService
+@inject Microsoft.Extensions.Logging.ILogger<ImageDetailModal> Logger
 
 <DialogModal @bind-Visible="Visible">
     @if (Image == null)
@@ -79,6 +80,11 @@
                 EditTitle = Image.Title;
                 EditCategory = Image.Category;
                 EditDescription = Image.Description;
+                Logger.LogInformation("ImageDetailModal loaded Image: Id={Id} FileName={FileName} Category={Category} Title={Title} Created={Created}", Image.Id, Image.FileName, Image.Category, Image.Title, Image.CreatedDate.ToString("O"));
+            }
+            else
+            {
+                Logger.LogWarning("ImageDetailModal: Image not found for Id {Id}", ImageId.Value);
             }
         }
     }
@@ -87,6 +93,7 @@
     {
         IsEditing = true;
         ErrorMessage = string.Empty;
+        Logger.LogInformation("ImageDetailModal: StartEdit image {Id}", Image?.Id);
     }
 
     private void CancelEdit()
@@ -99,6 +106,7 @@
         }
         IsEditing = false;
         ErrorMessage = string.Empty;
+        Logger.LogInformation("ImageDetailModal: CancelEdit image {Id}", Image?.Id);
     }
 
     private void SaveEdit()
@@ -106,6 +114,7 @@
         if (Image == null) return;
         IsSaving = true;
         ErrorMessage = string.Empty;
+        Logger.LogInformation("ImageDetailModal: SaveEdit started for image {Id} (Title={Title} Category={Category})", Image.Id, EditTitle, EditCategory);
         try
         {
             Image.Title = EditTitle;
@@ -113,10 +122,12 @@
             Image.Description = EditDescription;
             // await ImageService.UpdateImageAsync(Image); // Uncomment if implemented
             IsEditing = false;
+            Logger.LogInformation("ImageDetailModal: SaveEdit completed for image {Id}", Image.Id);
         }
         catch (Exception ex)
         {
             ErrorMessage = ex.Message;
+            Logger.LogError(ex, "ImageDetailModal: SaveEdit failed for image {Id}", Image?.Id);
         }
         finally
         {
@@ -126,6 +137,7 @@
 
     private async Task Close()
     {
+        Logger.LogInformation("ImageDetailModal: Close invoked for image {Id}", Image?.Id);
         await VisibleChanged.InvokeAsync(false);
         IsEditing = false;
         ErrorMessage = string.Empty;

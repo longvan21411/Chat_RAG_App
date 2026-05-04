@@ -11,3 +11,16 @@
 /home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/refint/ChatRagAppConfiguration.dll
 /home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.pdb
 /home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ref/ChatRagAppConfiguration.dll
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/bin/Debug/net8.0/ChatRagAppConfiguration.deps.json
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/bin/Debug/net8.0/ChatRagAppConfiguration.dll
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/bin/Debug/net8.0/ChatRagAppConfiguration.pdb
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.csproj.AssemblyReference.cache
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.GeneratedMSBuildEditorConfig.editorconfig
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.AssemblyInfoInputs.cache
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.AssemblyInfo.cs
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.csproj.CoreCompileInputs.cache
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.sourcelink.json
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.dll
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/refint/ChatRagAppConfiguration.dll
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.pdb
+/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ref/ChatRagAppConfiguration.dll
