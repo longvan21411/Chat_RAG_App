@@ -105,12 +105,10 @@ builder.Services.AddScoped<AgentFactory>();
 builder.Services.AddScoped<ImageSeeder>(sp =>
 {
     var qdrant = sp.GetRequiredService<IQdrantService>();
-    var embedding = sp.GetRequiredService<IEmbeddingService>();
-    var imageService = sp.GetRequiredService<IImageService>();
     var logger = sp.GetRequiredService<ILogger<ImageSeeder>>();
     var trainedImgPath = Path.Combine(AppContext.BaseDirectory, "TrainedImg");
     
-    return new ImageSeeder(qdrant, embedding, imageService, logger, trainedImgPath);
+    return new ImageSeeder(qdrant, logger, trainedImgPath);
 });
 
 // ── MCP Server ──────────────────────────────────────────────────────────────
