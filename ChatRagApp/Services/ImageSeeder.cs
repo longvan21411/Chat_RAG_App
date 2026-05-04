@@ -43,6 +43,14 @@ public class ImageSeeder
                 await qdrantService.EnsureNamedVectorCollectionIfNotExistsAsync("images", ct);
                 _logger.LogInformation("Created 'images' collection in Qdrant.");
             }
+
+            // If the collection already contains any points, skip seeding entirely.
+            var hasPoints = await qdrantService.CollectionHasPointsAsync("images", ct);
+            if (hasPoints)
+            {
+                _logger.LogInformation("'images' collection already contains points. Skipping seeding.");
+                return;
+            }
         }
         int countofImages = 0;
         int skippedImages = 0;

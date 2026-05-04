@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ChatRagAppConfiguration")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1eeacdf28fca163411b0e00f02f39bb6649ef2fc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2813f4ff88234680d731f51300b1eef6201f9f79")]
 [assembly: System.Reflection.AssemblyProductAttribute("ChatRagAppConfiguration")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ChatRagAppConfiguration")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using System.IO;
 
 namespace ChatRagApp.Services;
 
@@ -103,6 +104,37 @@ public class ImageService : IImageService
         // Text queries are projected into the same deterministic vector space used during image upserts.
         var queryEmbedding = ComputeTextEmbeddingApprox(query);
         return await _qdrant.SearchImagesByTextAsync(queryEmbedding, topK, ct);
+    }
+
+    public async Task<List<ImageSearchResult>> GetImagesByCategoryAsync(string category, int topK = 24, CancellationToken ct = default)
+    {
+        try
+        {
+            return await _qdrant.GetImagesByCategoryAsync(category, topK, ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "GetImagesByCategoryAsync failed for {Category}", category);
+            return new List<ImageSearchResult>();
+        }
+    }
+
+    public async Task<List<ImageSearchResult>> SearchByImageAsync(Guid imageId, int topK = 10, CancellationToken ct = default)
+    {
+        try
+        {
+            var image = await GetImagePointByIdAsync(imageId, ct);
+            if (image == null) return new List<ImageSearchResult>();
+            var path = Path.Combine(_wwwrootPath, "uploads", "images", image.Category, image.FileName);
+            if (!File.Exists(path)) return new List<ImageSearchResult>();
+            var emb = ComputeImageEmbedding(path);
+            return await _qdrant.SearchImagesByImageAsync(emb, topK, ct);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "SearchByImageAsync failed for {ImageId}", imageId);
+            return new List<ImageSearchResult>();
+        }
     }
 
 

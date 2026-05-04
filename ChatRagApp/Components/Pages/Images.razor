@@ -6,9 +6,9 @@
 <PageTitle>Images — Chat RAG App</PageTitle>
 
 <div class="images-page container py-4">
-    <h1 class="mb-4">🖼️ Image Management</h1>
+    <h3 class="mb-4">🖼️ Image Management</h3>
 
-    <!-- Upload Section -->
+    @* <!-- Upload Section -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header images-section-header images-section-header-upload">
             <strong>Upload Images</strong>
@@ -71,7 +71,7 @@
                 </div>
             }
         </div>
-    </div>
+    </div> *@
 
     <!-- Search Section -->
     <div class="card border-0 shadow-sm mb-4">
@@ -96,48 +96,86 @@
         </div>
     </div>
 
-    <!-- Results -->
-    @if (SearchResults.Any())
+    <!-- Category sections: Cats, Dogs, Wilds -->
+    <div class="mb-3">
+        @if (!string.IsNullOrWhiteSpace(SearchQuery))
+        {
+            <div class="alert alert-info">Showing results for: <strong>@SearchQuery</strong></div>
+        }
+    </div>
+
+    @foreach (var cat in Categories)
     {
-        <h4 class="mb-3">Search Results (@SearchResults.Count)</h4>
-        <div class="row g-3">
-            @foreach (var result in SearchResults)
-            {
-                <div class="col-md-4 col-lg-3">
-                    <div class="card border-0 shadow-sm h-100">
-                        <div class="card-body">
-                            <div style="cursor:pointer;" @onclick="() => ShowImageDetail(result.Id)">
-                                <div class="images-result-thumbnail rounded d-flex align-items-center justify-content-center mb-3"
-                                     style="height:120px; font-size:2rem; background:#f8f9fa; overflow:hidden;">
-                                    @if (!string.IsNullOrWhiteSpace(result.FileName) && !string.IsNullOrWhiteSpace(result.Category))
-                                    {
-                                        <img src="@($"/TrainedImg/{result.Category}/{result.FileName}")" alt="@result.Title" style="max-height: 110px; max-width: 100%; object-fit: contain;" />
-                                    }
-                                    else
-                                    {
-                                        <span>🖼️</span>
-                                    }
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-header images-section-header">
+                <strong>@cat.DisplayName</strong>
+            </div>
+            <div class="card-body">
+                @if (cat.IsLoading)
+                {
+                    <div class="text-muted">Loading…</div>
+                }
+                else if (!cat.Items.Any())
+                {
+                    <div class="text-muted">No images available in this category.</div>
+                }
+                else
+                {
+                    <div class="row g-3">
+                        @foreach (var result in cat.Items)
+                        {
+                            <div class="col-md-4 col-lg-3">
+                                <div class="card border-0 shadow-sm h-100">
+                                    <div class="card-body">
+                                        <div style="cursor:pointer;" @onclick="() => ShowImageDetail(result.Id)">
+                                            <div class="images-result-thumbnail rounded d-flex align-items-center justify-content-center mb-3"
+                                                 style="height:140px; font-size:2rem; background:#f8f9fa; overflow:hidden;">
+                                                @if (!string.IsNullOrWhiteSpace(result.FileName) && !string.IsNullOrWhiteSpace(result.Category))
+                                                {
+                                                    <img src="@($"/TrainedImg/{result.Category}/{result.FileName}")" alt="@result.Title" style="max-height: 110px; max-width: 100%; object-fit: contain;" />
+                                                }
+                                                else
+                                                {
+                                                    <span>🖼️</span>
+                                                }
+                                            </div>
+                                            <h6 class="card-title text-truncate">@result.Title</h6>
+                                            <div class="d-flex justify-content-between">
+                                                <span class="badge bg-primary">@result.Category</span>
+                                                <span class="badge bg-success">@result.Score.ToString("F2")</span>
+                                            </div>
+                                            <div class="mt-2 d-flex justify-content-between">
+                                                <div>
+                                                    <button class="btn btn-sm btn-outline-primary" @onclick:stopPropagation="true" @onclick="() => FindSimilarByText(result.Title)">Find similar</button>
+                                                    <button class="btn btn-sm btn-outline-secondary ms-2" @onclick:stopPropagation="true" @onclick="() => FindSimilarByImage(result.Id)">Image similar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <h6 class="card-title text-truncate">@result.Title</h6>
-                                <p class="card-text text-muted small text-truncate">@result.Description</p>
-                                <div class="d-flex justify-content-between">
-                                    <span class="badge bg-primary">@result.Category</span>
-                                    <span class="badge bg-success">@result.Score.ToString("F2")</span>
-                                </div>
-                                <p class="text-muted small mt-1 text-truncate">@result.FileName</p>
                             </div>
-                        </div>
+                        }
                     </div>
-                </div>
-            }
+                }
+            </div>
         </div>
     }
+
     @* Image Detail Modal Popup (outside results grid) *@
     <ImageDetailModal ImageId="@SelectedImageId" Visible="@ShowDetailModal" VisibleChanged="@OnDetailModalChanged" />
-    
+
 </div>
 
 @code {
+    private class CategorySection
+    {
+        public string Key { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
+        public List<ImageSearchResult> Items { get; set; } = new();
+        public bool IsLoading { get; set; } = false;
+    }
+
+    private List<CategorySection> Categories { get; set; } = new();
     private string UploadTitle { get; set; } = string.Empty;
     private string UploadCategory { get; set; } = "general";
     private string UploadDescription { get; set; } = string.Empty;
@@ -147,8 +185,6 @@
 
     private string SearchQuery { get; set; } = string.Empty;
     private bool IsSearching { get; set; }
-    private List<ImageSearchResult> SearchResults { get; set; } = [];
-    private bool HasSearched { get; set; }
 
     // Modal handlers
     private Guid? SelectedImageId;
@@ -200,7 +236,7 @@
         }
         catch (Exception ex)
         {
-            UploadResults = [new ImageUploadResult { Success = false, FileName = "batch", Error = ex.Message }];
+            UploadResults = new List<ImageUploadResult> { new ImageUploadResult { Success = false, FileName = "batch", Error = ex.Message } };
         }
         finally
         {
@@ -209,21 +245,49 @@
         }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        Categories = new List<CategorySection>
+        {
+            new CategorySection { Key = "cats", DisplayName = "Cats" },
+            new CategorySection { Key = "dogs", DisplayName = "Dogs" },
+            new CategorySection { Key = "wild_animals", DisplayName = "Wilds" }
+        };
+
+        await LoadCategoriesAsync();
+    }
+
     private async Task SearchImages()
     {
-        if (string.IsNullOrWhiteSpace(SearchQuery)) return;
-
         IsSearching = true;
-        HasSearched = true;
         StateHasChanged();
 
         try
         {
-            SearchResults = await ImageService.SearchByTextAsync(SearchQuery, 12);
+            if (string.IsNullOrWhiteSpace(SearchQuery))
+            {
+                await LoadCategoriesAsync();
+                return;
+            }
+
+            var results = await ImageService.SearchByTextAsync(SearchQuery, 72);
+            var resultsByCategory = results.GroupBy(r => r.Category).ToDictionary(g => g.Key, g => g.ToList());
+
+            foreach (var c in Categories)
+            {
+                if (c.Items == null || !c.Items.Any())
+                {
+                    c.Items = await ImageService.GetImagesByCategoryAsync(c.Key, 24);
+                }
+
+                var matches = resultsByCategory.ContainsKey(c.Key) ? resultsByCategory[c.Key] : new List<ImageSearchResult>();
+                var remaining = c.Items.Where(i => !matches.Any(m => m.Id == i.Id)).ToList();
+                c.Items = matches.Concat(remaining).Take(24).ToList();
+            }
         }
         catch
         {
-            SearchResults = [];
+            // ignore
         }
         finally
         {
@@ -235,6 +299,60 @@
     private async Task HandleSearchKey(KeyboardEventArgs e)
     {
         if (e.Key == "Enter") await SearchImages();
+    }
+
+    private async Task FindSimilarByText(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query)) return;
+        SearchQuery = query;
+        await SearchImages();
+    }
+
+    private async Task FindSimilarByImage(Guid imageId)
+    {
+        IsSearching = true;
+        StateHasChanged();
+
+        try
+        {
+            var results = await ImageService.SearchByImageAsync(imageId, 72);
+            var resultsByCategory = results.GroupBy(r => r.Category).ToDictionary(g => g.Key, g => g.ToList());
+
+            foreach (var c in Categories)
+            {
+                if (c.Items == null || !c.Items.Any())
+                {
+                    c.Items = await ImageService.GetImagesByCategoryAsync(c.Key, 24);
+                }
+
+                var matches = resultsByCategory.ContainsKey(c.Key) ? resultsByCategory[c.Key] : new List<ImageSearchResult>();
+                var remaining = c.Items.Where(i => !matches.Any(m => m.Id == i.Id)).ToList();
+                c.Items = matches.Concat(remaining).Take(24).ToList();
+            }
+        }
+        catch
+        {
+            // ignore
+        }
+        finally
+        {
+            IsSearching = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        var tasks = Categories.Select(async c =>
+        {
+            c.IsLoading = true;
+            StateHasChanged();
+            c.Items = await ImageService.GetImagesByCategoryAsync(c.Key, 24);
+            c.IsLoading = false;
+        });
+
+        await Task.WhenAll(tasks);
+        StateHasChanged();
     }
 
     // ── Adapter: wrap IBrowserFile as IFormFile for the image service ──

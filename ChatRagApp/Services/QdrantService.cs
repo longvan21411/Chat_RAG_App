@@ -18,6 +18,21 @@ public class QdrantService : IQdrantService
     {
         await EnsureNamedVectorCollectionAsync(name, ct);
     }
+
+    // Returns true if the given collection already contains at least one point.
+    public async Task<bool> CollectionHasPointsAsync(string name, CancellationToken ct = default)
+    {
+        try
+        {
+            var resp = await _client.ScrollAsync(name, filter: null, limit: 1, cancellationToken: ct);
+            return resp?.Result != null && resp.Result.Count > 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "CollectionHasPointsAsync failed for {Name}", name);
+            return false;
+        }
+    }
     private const string UsersCollection = "users";
     private const string ChatHistoryCollection = "chat_history";
     private const string ImagesCollection = "images";
@@ -325,7 +340,71 @@ public class QdrantService : IQdrantService
                 ImageUrl = $"/uploads/images/{GetString(r.Payload, "category")}/{GetString(r.Payload, "file_name")}"
             }).ToList();
         }
-        catch (Exception ex) { _logger.LogWarning(ex, "SearchImagesByText failed"); return []; }
+        catch (Exception ex) { _logger.LogWarning(ex, "SearchImagesByText failed"); return new List<ImageSearchResult>(); }
+    }
+
+    public async Task<List<ImageSearchResult>> GetImagesByCategoryAsync(string category, int topK = 24, CancellationToken ct = default)
+    {
+        try
+        {
+            var filter = new Filter();
+            filter.Must.Add(new Condition
+            {
+                Field = new FieldCondition { Key = "is_active", Match = new Match { Boolean = true } }
+            });
+            filter.Must.Add(new Condition
+            {
+                Field = new FieldCondition { Key = "category", Match = new Match { Text = category } }
+            });
+
+            var orderBy = new OrderBy { Key = "created_date_unix", Direction = Direction.Desc };
+            var resp = await _client.ScrollAsync(ImagesCollection, filter, limit: (uint)topK, orderBy: orderBy, cancellationToken: ct);
+            return resp.Result.Select(r => new ImageSearchResult
+            {
+                Id = Guid.TryParse(r.Id.Uuid, out var g) ? g : Guid.Empty,
+                FileName = GetString(r.Payload, "file_name"),
+                Title = GetString(r.Payload, "title"),
+                Category = GetString(r.Payload, "category"),
+                Description = GetString(r.Payload, "description"),
+                Score = 0f,
+                ImageUrl = $"/uploads/images/{GetString(r.Payload, "category")}/{GetString(r.Payload, "file_name")}"
+            }).ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "GetImagesByCategoryAsync failed for {Category}", category);
+            return new List<ImageSearchResult>();
+        }
+    }
+
+    public async Task<List<ImageSearchResult>> SearchImagesByImageAsync(float[] queryEmbedding, int topK = 10, CancellationToken ct = default)
+    {
+        try
+        {
+            var filter = new Filter();
+            filter.Must.Add(new Condition
+            {
+                Field = new FieldCondition { Key = "is_active", Match = new Match { Boolean = true } }
+            });
+            var results = await _client.SearchAsync(
+                ImagesCollection,
+                queryEmbedding.AsMemory(),
+                filter: filter,
+                limit: (ulong)topK,
+                vectorName: "image_embedding",
+                cancellationToken: ct);
+            return results.Select(r => new ImageSearchResult
+            {
+                Id = Guid.TryParse(r.Id.Uuid, out var g) ? g : Guid.Empty,
+                FileName = GetString(r.Payload, "file_name"),
+                Title = GetString(r.Payload, "title"),
+                Category = GetString(r.Payload, "category"),
+                Description = GetString(r.Payload, "description"),
+                Score = r.Score,
+                ImageUrl = $"/uploads/images/{GetString(r.Payload, "category")}/{GetString(r.Payload, "file_name")}"
+            }).ToList();
+        }
+        catch (Exception ex) { _logger.LogWarning(ex, "SearchImagesByImage failed"); return new List<ImageSearchResult>(); }
     }
 
     public async Task<DailyReport> GetDailyReportAsync(DateTime date, CancellationToken ct = default)
