@@ -1,7 +1,7 @@
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
-using GithubConfiguration;
+using ChatRagAppConfiguration;
 
 #pragma warning disable SKEXP0010
 
@@ -19,7 +19,7 @@ public class EmbeddingService : IEmbeddingService
     {
         _logger = logger;
        
-        var config = GithubConfigurationInfo.GetGithubConfigurationInfo();
+        var config = ChatRagAppConfigurationInfo.GetChatRagAppConfigurationInfo();
         var tokenKey = config.GithubToken;
         var model = "text-embedding-3-small";        
          _dimension = 1536;

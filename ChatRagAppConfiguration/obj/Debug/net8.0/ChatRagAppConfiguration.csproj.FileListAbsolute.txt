@@ -1,0 +1,13 @@
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/bin/Debug/net8.0/ChatRagAppConfiguration.deps.json
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/bin/Debug/net8.0/ChatRagAppConfiguration.dll
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/bin/Debug/net8.0/ChatRagAppConfiguration.pdb
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.csproj.AssemblyReference.cache
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.GeneratedMSBuildEditorConfig.editorconfig
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.AssemblyInfoInputs.cache
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.AssemblyInfo.cs
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.csproj.CoreCompileInputs.cache
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.sourcelink.json
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.dll
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/refint/ChatRagAppConfiguration.dll
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ChatRagAppConfiguration.pdb
+/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/Debug/net8.0/ref/ChatRagAppConfiguration.dll

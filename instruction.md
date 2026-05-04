@@ -476,9 +476,9 @@ Chat_RAG_App/
 │   ├── lib/
 │   │   └── bootstrap/
 │   └── upload/
-├── GithubConfiguration/
-│   ├── GithubConfiguration.csproj
-│   ├── GithubConfigurationInfo.cs
+├── ChatRagAppConfiguration/
+│   ├── ChatRagAppConfiguration.csproj
+│   ├── ChatRagAppConfigurationInfo.cs
 │   ├── bin/
 │   └── obj/
 ├── TrainedImg/

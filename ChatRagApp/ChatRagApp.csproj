@@ -20,7 +20,7 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GithubConfiguration\GithubConfiguration.csproj" />
+    <ProjectReference Include="..\ChatRagAppConfiguration\ChatRagAppConfiguration.csproj" />
   </ItemGroup>
 
     <!-- Copy the root-level TrainedImg folder (with all subfolders) to the output directory as TrainedImg -->

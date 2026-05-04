@@ -672,11 +672,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/GithubConfiguration.csproj",
-      "projectName": "GithubConfiguration",
-      "projectPath": "/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/GithubConfiguration.csproj",
+      "projectUniqueName": "/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/ChatRagAppConfiguration.csproj",
+      "projectName": "ChatRagAppConfiguration",
+      "projectPath": "/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/ChatRagAppConfiguration.csproj",
       "packagesPath": "/home/tvv2hc/.nuget/packages/",
-      "outputPath": "/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/GithubConfiguration/obj/",
+      "outputPath": "/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/tvv2hc/.nuget/NuGet/NuGet.Config"

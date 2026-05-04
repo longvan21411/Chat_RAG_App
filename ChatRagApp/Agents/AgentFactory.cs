@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenAI;
 using System.ClientModel;
-using GithubConfiguration;
+using ChatRagAppConfiguration;
 
 namespace ChatRagApp.Agents;
 
@@ -20,7 +20,7 @@ public class AgentFactory
     {
         _logger = loggerFactory.CreateLogger<AgentFactory>();
 
-        var githubConfig = GithubConfigurationInfo.GetGithubConfigurationInfo();
+        var githubConfig = ChatRagAppConfigurationInfo.GetChatRagAppConfigurationInfo();
         var modelName = string.IsNullOrWhiteSpace(githubConfig.GithubModelName) ? "gpt-4o" : githubConfig.GithubModelName;
         var configs = configuration.GetSection("Agents").Get<List<AgentConfig>>() ?? [];
 
