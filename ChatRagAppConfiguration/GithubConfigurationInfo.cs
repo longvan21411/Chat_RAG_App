@@ -33,10 +33,3 @@ public class GithubConfigurationInfo
         return string.Empty;
     }
 }
-
-public class ConfigurationInfo
-{
-    public string GithubToken { get; set; } = string.Empty;
-    public string GithubEndpoint { get; set; } = string.Empty;
-    public string GithubModelName { get; set; } = string.Empty;
-}

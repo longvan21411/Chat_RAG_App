@@ -1,3 +1,12 @@
+using ChatRagAppConfiguration;
+using Microsoft.ML.OnnxRuntime;
+using Microsoft.ML.OnnxRuntime.Tensors;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using System.Security.Cryptography;
+using System.Text;
+
 namespace ChatRagApp.Services.Utils;
  public static class ImageUtils
  {
@@ -13,7 +22,7 @@ namespace ChatRagApp.Services.Utils;
     static ImageUtils()
      {
          
-         var cfg = GetImageSearchConfigInfo();
+         var cfg = ImageSearchConfigurationInfo.GetImageSearchConfigurationInfo();
          ResizeSize = Math.Max(1, cfg.ImageResize);
          Grid = Math.Max(1, cfg.SpatialGrid);
      }
