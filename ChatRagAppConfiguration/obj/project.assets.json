@@ -667,24 +667,25 @@
     ]
   },
   "packageFolders": {
-    "/home/dmin/.nuget/packages/": {}
+    "/home/tvv2hc/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/ChatRagAppConfiguration.csproj",
+      "projectUniqueName": "/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/ChatRagAppConfiguration.csproj",
       "projectName": "ChatRagAppConfiguration",
-      "projectPath": "/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/ChatRagAppConfiguration.csproj",
-      "packagesPath": "/home/dmin/.nuget/packages/",
-      "outputPath": "/mnt/d/VS_Code/RAG/Chat_RAG_App/ChatRagAppConfiguration/obj/",
+      "projectPath": "/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/ChatRagAppConfiguration.csproj",
+      "packagesPath": "/home/tvv2hc/.nuget/packages/",
+      "outputPath": "/home/tvv2hc/DotnetAgents/Rags/Chat_RAG_App/ChatRagAppConfiguration/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/dmin/.nuget/NuGet/NuGet.Config"
+        "/home/tvv2hc/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "file:///home/tvv2hc/.nuget/packages": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -697,11 +698,6 @@
         "warnAsError": [
           "NU1605"
         ]
-      },
-      "restoreAuditProperties": {
-        "enableAudit": "true",
-        "auditLevel": "low",
-        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -737,7 +733,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.420/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.126/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

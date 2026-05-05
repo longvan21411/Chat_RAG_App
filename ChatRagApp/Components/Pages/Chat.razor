@@ -3,6 +3,7 @@
 @attribute [Authorize]
 @using Markdig
 @using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
 @inject AgentFactory AgentFactory
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime JS
@@ -91,13 +92,24 @@
                 <div class="input-group">
                     <textarea class="form-control" rows="2" placeholder="Type your message..."
                               @bind="UserInput" @bind:event="oninput"
-                              @onkeydown="HandleKeyDown" disabled="@IsLoading"
+                              @onkeydown="HandleKeyDown" disabled="@IsLoading"  
                               style="resize:none"></textarea>
-                    <button class="btn btn-primary px-4" @onclick="SendMessage"
+                </div>
+
+                <div class="input-group-actions d-flex gap-2 align-items-center mt-2 w-100">
+                    <button class="btn btn-outline-secondary btn-sm" @onclick="AddFiles" disabled="@IsLoading">
+                        Add files
+                    </button>
+                    <button class="btn btn-outline-secondary btn-sm" @onclick="WebSearch" disabled="@IsLoading">
+                        Web search
+                    </button>
+                    <button class="btn btn-primary px-4 ms-auto" @onclick="SendMessage" 
                             disabled="@(IsLoading || string.IsNullOrWhiteSpace(UserInput))">
                         Send
                     </button>
                 </div>
+
+                <InputFile id="chatFileInput" style="display:none" OnChange="HandleFilesSelected" multiple />
 
                 @if (SessionTokens.Total > 0)
                 {
@@ -205,6 +217,61 @@
     {
         UserInput = q;
         await SendMessage();
+    }
+
+    private async Task AddFiles()
+    {
+        // Trigger the hidden InputFile element to open the file picker
+        try
+        {
+            await JS.InvokeVoidAsync("eval", "document.getElementById('chatFileInput').click()");
+        }
+        catch
+        {
+            // fallback: show a chat note if JS interop fails
+            Messages.Add(new ChatMessage { Role = "assistant", Content = "Unable to open file picker." });
+            StateHasChanged();
+        }
+    }
+
+    private async Task WebSearch()
+    {
+        var query = (UserInput ?? string.Empty).Trim();
+        string url;
+        if (string.IsNullOrEmpty(query))
+            url = "https://duckduckgo.com/";
+        else
+            url = $"https://duckduckgo.com/?q={Uri.EscapeDataString(query)}";
+
+        try
+        {
+            await JS.InvokeVoidAsync("open", url, "_blank");
+        }
+        catch (Exception ex)
+        {
+            Logger.LogWarning(ex, "WebSearch open failed");
+            Messages.Add(new ChatMessage { Role = "assistant", Content = $"Could not open web search: {ex.Message}" });
+            StateHasChanged();
+        }
+    }
+
+    private async Task HandleFilesSelected(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles();
+        if (files == null || !files.Any()) return;
+
+        var parts = new List<string>();
+        foreach (var f in files)
+        {
+            parts.Add($"{f.Name} ({f.Size / 1024} KB)");
+            // If desired: read the file content here using f.OpenReadStream(maxAllowedSize)
+        }
+
+        var content = "Attached files: " + string.Join(", ", parts);
+        Messages.Add(new ChatMessage { Role = "user", Content = content });
+        UserInput = string.Empty;
+        StateHasChanged();
+        await Task.CompletedTask;
     }
 
     private static RenderFragment RenderMessageContent(ChatMessage msg) => builder =>
