@@ -34,6 +34,14 @@
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow: auto; /* allow scrolling but hide native scrollbars */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.page::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 main {
@@ -179,4 +187,17 @@ article {
 
 .main-content-disable-scrollbar {
     overflow: hidden !important;
+}
+
+/* Hide scrollbars on main content while keeping scroll behavior where desired */
+main[name="main-content"] {
+    /* Allow scrolling but hide native scrollbars across browsers */
+    overflow: auto;
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+main[name="main-content"]::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
 }

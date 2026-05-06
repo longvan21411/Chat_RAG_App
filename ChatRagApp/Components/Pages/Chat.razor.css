@@ -1,7 +1,9 @@
 .chat-page {
     width: 100%;
     max-width: none;
-    height: calc(100vh - 3.5rem - 2.1rem);
+    /* reduce chat area so the composer is fully visible
+       subtract composer height (14rem) in addition to existing offsets */
+     height: calc(100vh - 3.5rem - 2.1rem - 5rem);
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -29,6 +31,16 @@
     flex: 1;
     min-height: 0;
     overflow: hidden;
+    /* Limit height so the composer below is always visible
+       Adjust the 14rem value if your composer is taller/shorter */
+        max-height: calc(100vh - 5rem);
+}
+
+.chat-composer {
+    position: sticky;
+    bottom: 0;
+    z-index: 30;
+    background: var(--layout-surface-background);
 }
 
 .chat-window {
