@@ -1,0 +1,46 @@
+.image-detail-modal .card {
+    color: var(--app-card-foreground);
+}
+
+.image-detail-modal .card-body h3,
+.image-detail-modal .card-body p,
+.image-detail-modal .card-body strong,
+.image-detail-modal .card-body .card-title {
+    color: var(--app-card-foreground);
+}
+
+.image-detail-modal .card-body .text-muted {
+    color: var(--app-muted-color);
+}
+
+.image-detail-modal .form-label {
+    color: var(--app-input-foreground);
+}
+
+.image-detail-modal .image-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    background: rgba(255,255,255,0.06);
+}
+
+html[data-theme='light'] .image-detail-modal .image-container {
+    background: #f8f9fa;
+}
+
+.image-detail-modal .image-preview {
+    max-width: 100%;
+    max-height: 350px;
+    object-fit: contain;
+    border-radius: 4px;
+}
+
+/* Buttons inside modal should follow card foreground for visibility */
+.image-detail-modal .btn {
+    color: var(--app-card-foreground);
+}
+
+@media (max-width: 767px) {
+    .image-detail-modal .image-container { min-height: 140px; }
+}

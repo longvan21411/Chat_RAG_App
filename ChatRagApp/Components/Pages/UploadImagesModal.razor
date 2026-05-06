@@ -1,0 +1,142 @@
+@using ChatRagApp.Models
+@inject IImageService ImageService
+@inject Microsoft.Extensions.Logging.ILogger<UploadImagesModal> Logger
+
+<DialogModal @bind-Visible="Visible">
+    <div class="container py-2">
+        <h4 class="mb-3">Upload Images</h4>
+
+        <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input class="form-control" @bind="Title" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" @bind="Description"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Date Changed</label>
+            <InputDate class="form-control" @bind-Value="DateChanged" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Uploaded By</label>
+            <input class="form-control" @bind="UploadedBy" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Select Images (JPG, PNG, WEBP, GIF — max 10 MB each)</label>
+            <InputFile OnChange="OnFilesSelected" multiple accept=".jpg,.jpeg,.png,.webp,.gif" />
+        </div>
+
+        @if (SelectedFiles.Any())
+        {
+            <div class="mb-3">
+                <p class="text-muted">@SelectedFiles.Count file(s) selected</p>
+            </div>
+        }
+
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-secondary me-2" @onclick="Cancel" disabled="@IsUploading">Cancel</button>
+            <button class="btn btn-primary" @onclick="UploadFiles" disabled="@IsUploading || !SelectedFiles.Any()">
+                @if (IsUploading)
+                {
+                    <span class="spinner-border spinner-border-sm me-2"></span>
+                    <span>Uploading...</span>
+                }
+                else
+                {
+                    <span>Upload</span>
+                }
+            </button>
+        </div>
+    </div>
+</DialogModal>
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<bool> VisibleChanged { get; set; }
+    [Parameter] public EventCallback OnUploaded { get; set; }
+
+    private string Title { get; set; } = string.Empty;
+    private string Description { get; set; } = string.Empty;
+    private string UploadedBy { get; set; } = string.Empty;
+    private DateTime? DateChanged { get; set; } = DateTime.UtcNow.Date;
+    private List<IBrowserFile> SelectedFiles { get; set; } = new();
+    private bool IsUploading { get; set; }
+
+    private void OnFilesSelected(InputFileChangeEventArgs e)
+    {
+        SelectedFiles = e.GetMultipleFiles(50).ToList();
+    }
+
+    private async Task UploadFiles()
+    {
+        if (!SelectedFiles.Any()) return;
+
+        IsUploading = true;
+        StateHasChanged();
+
+        try
+        {
+            var formFiles = SelectedFiles.Select(f => new BrowserFormFile(f)).Cast<Microsoft.AspNetCore.Http.IFormFile>().ToList();
+
+                var metadata = new ImagePoint
+            {
+                Title = Title,
+                Description = Description,
+                Category = "uploaded",
+                    CreatedDate = DateChanged ?? DateTime.UtcNow,
+                Tag = UploadedBy
+            };
+
+            var results = await ImageService.UploadBulkAsync(formFiles, metadata);
+            var successCount = results.Count(r => r.Success);
+            Logger.LogInformation("UploadImagesModal: uploaded {Count} files ({Success} successes)", results.Count, successCount);
+
+            // notify parent to refresh lists
+            await OnUploaded.InvokeAsync();
+
+            // close modal
+            await VisibleChanged.InvokeAsync(false);
+            SelectedFiles.Clear();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "UploadImagesModal: upload failed");
+        }
+        finally
+        {
+            IsUploading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task Cancel()
+    {
+        await VisibleChanged.InvokeAsync(false);
+    }
+
+    // ── Adapter: wrap IBrowserFile as IFormFile for the image service ──
+    private sealed class BrowserFormFile : Microsoft.AspNetCore.Http.IFormFile
+    {
+        private readonly IBrowserFile _file;
+        private const long MaxSize = 10 * 1024 * 1024;
+
+        public BrowserFormFile(IBrowserFile file) => _file = file;
+
+        public string ContentType => _file.ContentType;
+        public string ContentDisposition => $"form-data; name=\"file\"; filename=\"{_file.Name}\"";
+        public Microsoft.AspNetCore.Http.IHeaderDictionary Headers => new Microsoft.AspNetCore.Http.HeaderDictionary();
+        public long Length => _file.Size;
+        public string Name => "file";
+        public string FileName => _file.Name;
+
+        public void CopyTo(Stream target) => _file.OpenReadStream(MaxSize).CopyTo(target);
+        public async Task CopyToAsync(Stream target, CancellationToken ct = default)
+            => await _file.OpenReadStream(MaxSize).CopyToAsync(target, ct);
+        public Stream OpenReadStream() => _file.OpenReadStream(MaxSize);
+    }
+}

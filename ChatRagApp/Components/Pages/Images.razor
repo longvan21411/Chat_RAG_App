@@ -6,7 +6,10 @@
 <PageTitle>Images — Chat RAG App</PageTitle>
 
 <div class="images-page container py-4">
-    <h3 class="mb-4">🖼️ Image Management</h3>
+    <div class="d-flex align-items-center mb-4">
+        <h3 class="mb-0 me-3">🖼️ Image Management</h3>
+        <button class="btn btn-primary btn-sm" @onclick="() => OpenUploadModal()">Upload images</button>
+    </div>
 
     @* <!-- Upload Section -->
     <div class="card border-0 shadow-sm mb-4">
@@ -164,6 +167,8 @@
     @* Image Detail Modal Popup (outside results grid) *@
     <ImageDetailModal ImageId="@SelectedImageId" Visible="@ShowDetailModal" VisibleChanged="@OnDetailModalChanged" />
 
+    <UploadImagesModal Visible="@ShowUploadModal" VisibleChanged="@OnUploadModalChanged" OnUploaded="@OnUploadCompleted" />
+
 </div>
 
 @code {
@@ -203,6 +208,29 @@
         {
             SelectedImageId = null;
         }
+    }
+
+    // Upload modal handlers
+    private bool ShowUploadModal;
+
+    private void OpenUploadModal()
+    {
+        ShowUploadModal = true;
+    }
+
+    private async Task OnUploadModalChanged(bool visible)
+    {
+        ShowUploadModal = visible;
+        if (!visible)
+        {
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnUploadCompleted()
+    {
+        await LoadCategoriesAsync();
+        StateHasChanged();
     }
 
     private void OnFilesSelected(InputFileChangeEventArgs e)
